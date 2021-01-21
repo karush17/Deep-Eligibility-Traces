@@ -1,7 +1,7 @@
 # Deep Eligibility Traces
 
 ## Introduction
-This repository consists of implementations of Eligiblity Traces and corresponding algorithms in the deep learning setting. Algorithms are implemented in [`PyTorch`]('/Pytorch') and [`Tensorflow 2.0`]('/Tensorflow') on a range of problems. Custom toy problems are provided in the [`MDPs`]('/MDPs') folder.
+This repository consists of implementations of Eligiblity Traces and corresponding algorithms in the deep learning setting. Algorithms are implemented in [`PyTorch`]('Pytorch/') and [`Tensorflow 2.0`]('Tensorflow/') on a range of problems. Custom toy problems are provided in the [`MDPs`]('MDPs/') folder.
 
 ## Trace Algorithms
 Following algorithms are available in the current version-
