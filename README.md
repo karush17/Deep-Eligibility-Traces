@@ -9,12 +9,12 @@ Following algorithms are available in the current version-
 ### PyTorch
 |Algorithm|Link|Implementation|
 |:-------:|:--:|:------------:|
-|TD-lambda||[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
+|TD-lambda|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
 
 ### Tensorflow 2.0
 |Algorithm|Link|Implementation|
 |:-------:|:--:|:------------:|
-|TD-lambda||[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
+|TD-lambda|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
 
 
 ## Custom Environments
