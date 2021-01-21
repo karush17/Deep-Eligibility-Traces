@@ -7,14 +7,14 @@ This repository consists of implementations of Eligiblity Traces and correspondi
 Following algorithms are available in the current version-
 
 ### PyTorch
-|Algorithm|Trace|Link|Implementation|
-|:-------:|:---:|:--:|:------------:|
-|TD-lambda|<ul><li>- [ ] Accumulating Trace</li><li>- [ ] Replacing Trace</li><li>- [ ] Dutch Trace</li></ul>|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
+|Algorithm|Link|Implementation|
+|:-------:|:--:|:------------:|
+|TD-lambda||[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
 
 ### Tensorflow 2.0
-|Algorithm|Trace|Link|Implementation|
-|:-------:|:---:|:--:|:------------:|
-|TD-lambda|<ul><li>- [ ] Accumulating Trace</li><li>- [ ] Replacing Trace</li><li>- [ ] Dutch Trace</li></ul>|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
+|Algorithm|Link|Implementation|
+|:-------:|:--:|:------------:|
+|TD-lambda||[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|TBA|
 
 
 ## Custom Environments
