@@ -50,22 +50,28 @@ def build parser():
 def train(args, env, policy, log_dict):
     state = env.reset()
     steps = 0
+    ep_step_count = 0
     ep_reward = 0
     ep_loss = 0
     while steps < args.num_steps:
         action = policy.get_action(state)
-        state, reward, done, _ = env.step(action)
+        next_state, reward, done, _ = env.step(action)
         ep_reward += reward
         steps += 1
+        ep_step_count += 1
+
+        loss = policy.update(args, state, reward, next_state, ep_step_count)
+        ep_loss += loss
+
+        state = next_state
 
         if done:
-            env.reset()
+            state = env.reset()
+            ep_step_count = 0
             done = False
             log_dict['rewards'].append(ep_reward)
-            log_dict['loss'].append(ep_loss)
-        
-        loss = policy.update(args)
-        ep_loss += loss
+            log_dict['td_error'].append(ep_loss)
+            log_dict['ep_count'].append(steps)
 
 
 def main():
@@ -80,6 +86,7 @@ def main():
     log_dict = {}
     log_dict['rewards'] = []
     log_dict['loss'] = []
+    log_dict['ep_count'] = []
 
     env_list = ['CyclicMDP', 'OneStateGaussianMDP', 'OneStateMDP']
 
