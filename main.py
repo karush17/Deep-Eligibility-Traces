@@ -15,6 +15,8 @@ from traces.traces import replacing_trace, accumulating_trace, dutch_trace
 
 def build parser():
     parser = argparse.ArgumentParser(description='Deep Eligibility Traces Args')
+    parser.add_argument('--alg', type=str, default="TD-lambda",
+                        help='Trace algorithm to be used (default: TD-lambda)')
     parser.add_argument('--log_dir', type=str, default="/log/",
                         help='Directory for storing logs (default: /log/)')
     parser.add_argument('--env', type=str, default="CyclicMDP",
@@ -45,19 +47,32 @@ def build parser():
     return parser
 
 
+def train(args, env, policy, log_dict):
+    state = env.reset()
+    steps = 0
+    ep_reward = 0
+    ep_loss = 0
+    while steps < args.num_steps:
+        action = policy.get_action(state)
+        state, reward, done, _ = env.step(action)
+        ep_reward += reward
+        steps += 1
+
+        if done:
+            env.reset()
+            done = False
+            log_dict['rewards'].append(ep_reward)
+            log_dict['loss'].append(ep_loss)
+        
+        loss = update(args, policy)
+        ep_loss += loss
+
+
 def main():
     parser = build_parser()
     args = parser.parse_args()
 
     np.random.seed(args.seed)
-    if args.lib=='torch':
-        use_cuda = torch.cuda.is_available()
-        device = torch.device('cuda' if use_cuda else 'cpu')
-        torch.manual_seed(args.seed)
-    else:
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-        tf.config.run_functions_eagerly(True)
-        tf.random.set_seed(args.seed)
     
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)   
@@ -70,10 +85,26 @@ def main():
 
     if args.env in env_list:
         env = getattr(sys.modules[__name__], args.env)
+        num_actions = env.num_actions
+        state_dims = env.num_states
     else:
         env = gym.make(args.env)
         env.seed(args.seed)
+        num_actions = env.action_space.n
+        state_dims = env.reset().shape[0]
     
+    if args.lib=='torch':
+        use_cuda = torch.cuda.is_available()
+        device = torch.device('cuda' if use_cuda else 'cpu')
+        torch.manual_seed(args.seed)
+        policy = PyTorch.Policy(args, state_dims, num_actions)
+    else:
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+        tf.config.run_functions_eagerly(True)
+        tf.random.set_seed(args.seed)
+        policy = Tensorflow.Policy(args, state_dims, num_actions)
+
+    train(args, env, policy, log_dict)
 
 
 if __name__=="__main__":
