@@ -3,8 +3,9 @@ import sys
 import numpy as np
 import argparse
 import torch
+import csv
 import tensorflow as tf
-import pickle as pkl
+from datetime import datetime
 
 from Pytorch import *
 from Tensorflow import *
@@ -72,6 +73,8 @@ def train(args, env, policy, log_dict):
             log_dict['rewards'].append(ep_reward)
             log_dict['td_error'].append(ep_loss)
             log_dict['ep_count'].append(steps)
+    
+    return log_dict
 
 
 def main():
@@ -111,7 +114,9 @@ def main():
         tf.random.set_seed(args.seed)
         policy = getattr(Tensorflow, args.alg)(args, state_dims, num_actions)
 
-    train(args, env, policy, log_dict)
+    log_dict = train(args, env, policy, log_dict)
+    res_plot(log_dict)
+    save_logs(log_dict)
 
 
 if __name__=="__main__":

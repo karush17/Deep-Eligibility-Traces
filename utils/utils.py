@@ -1,7 +1,9 @@
 import os
+import csv
 import numpy as np
 import torch
 import tensorflow as tf
+from datetime import datetime
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -34,4 +36,26 @@ def dict_to_tensor(d):
 		key: to_tensor(val)
 		for key, val in d.items()
 	}
+
+def res_plot(log_dir):
+	# plot rewards
+    plt.figure()
+    plt.title('Average Returns', fontsize=24)
+    plt.plot(log_dir['ep_count'], log_dir['rewards'])
+    plt.xlabel('Steps', fontsize=18)
+    plt.ylabel('Returns', fontsize=18)
+    plt.savefig('plot_rewards.png', dpi=600, bbox_inches='tight')
+	# plot errors
+    plt.figure()
+    plt.title('Average TD Error', fontsize=24)
+    plt.plot(log_dir['ep_count'], log_dir['td_error'])
+    plt.xlabel('Steps', fontsize=18)
+    plt.ylabel('Error', fontsize=18)
+    plt.savefig('plot_error.png', dpi=600, bbox_inches='tight')
+
+def save_logs(args, log_dir):
+	with open(args.alg+'_'+args.env'_'+str(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))+'.csv', 'w') as csv_file:  
+    writer = csv.writer(csv_file)
+    for key, value in log_dir.items():
+       writer.writerow([key, value])
 

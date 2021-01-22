@@ -36,7 +36,6 @@ class TDLambda(nn.Module):
             p.grad = torch.FloatTensor(-td_error*self.trace[idx]).clone()
         opt_value.step()
         return td_error
-    
 
     def reset_trace(self, step_count):
         if step_count==0:
