@@ -19,6 +19,8 @@ class TDLambda(nn.Module):
         self.value_net = ValueNetwork(args, state_dims, num_actions)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
         self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
+        print(self.value_net)
+        print(self.opt_value)
     
     def forward(self, states):
         return self.actor(states)
