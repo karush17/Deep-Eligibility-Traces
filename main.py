@@ -15,8 +15,8 @@ from traces.traces import replacing_trace, accumulating_trace, dutch_trace
 
 def build parser():
     parser = argparse.ArgumentParser(description='Deep Eligibility Traces Args')
-    parser.add_argument('--alg', type=str, default="TD-lambda",
-                        help='Trace algorithm to be used (default: TD-lambda)')
+    parser.add_argument('--alg', type=str, default="TDLambda",
+                        help='Trace algorithm to be used (default: TDLambda)')
     parser.add_argument('--log_dir', type=str, default="/log/",
                         help='Directory for storing logs (default: /log/)')
     parser.add_argument('--env', type=str, default="CyclicMDP",
@@ -64,7 +64,7 @@ def train(args, env, policy, log_dict):
             log_dict['rewards'].append(ep_reward)
             log_dict['loss'].append(ep_loss)
         
-        loss = update(args, policy)
+        loss = policy.update(args)
         ep_loss += loss
 
 
@@ -84,7 +84,7 @@ def main():
     env_list = ['CyclicMDP', 'OneStateGaussianMDP', 'OneStateMDP']
 
     if args.env in env_list:
-        env = getattr(sys.modules[__name__], args.env)
+        env = getattr(MDPs, args.env)()
         num_actions = env.num_actions
         state_dims = env.num_states
     else:
@@ -97,12 +97,12 @@ def main():
         use_cuda = torch.cuda.is_available()
         device = torch.device('cuda' if use_cuda else 'cpu')
         torch.manual_seed(args.seed)
-        policy = PyTorch.Policy(args, state_dims, num_actions)
+        policy = getattr(Pytorch, args.alg)(args, state_dims, num_actions)
     else:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
         tf.config.run_functions_eagerly(True)
         tf.random.set_seed(args.seed)
-        policy = Tensorflow.Policy(args, state_dims, num_actions)
+        policy = getattr(Tensorflow, args.alg)(args, state_dims, num_actions)
 
     train(args, env, policy, log_dict)
 
