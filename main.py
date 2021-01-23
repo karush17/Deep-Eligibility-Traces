@@ -5,6 +5,7 @@ import argparse
 import time
 import torch
 import csv
+import gym
 import MDPs
 import Pytorch
 import tensorflow as tf
