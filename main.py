@@ -56,7 +56,6 @@ def train(args, env, policy, log_dict):
     ep_loss = 0
     while steps < args.num_steps:
         action = policy.get_actions(state)
-        print(action)
         next_state, reward, done, _ = env.step(action)
         ep_reward += reward
         steps += 1
@@ -72,7 +71,7 @@ def train(args, env, policy, log_dict):
             ep_step_count = 0
             done = False
             log_dict['rewards'].append(ep_reward)
-            log_dict['td_error'].append(ep_loss)
+            log_dict['td_error'].append(ep_loss.data)
             log_dict['ep_count'].append(steps)
         
         if steps % args.log_interval==0:
