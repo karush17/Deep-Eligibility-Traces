@@ -1,3 +1,3 @@
-from cyclic_mdp import *
-from one_step_mdp import *
-from one_step_gaussian_mdp import *
+from MDPs.cyclic_mdp import *
+from MDPs.one_state_mdp import *
+from MDPs.one_state_gaussian_mdp import *

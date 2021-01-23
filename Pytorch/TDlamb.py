@@ -14,11 +14,11 @@ class TDLambda(nn.Module):
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
-        self.trace = torch.zeros(self.value_net.parameters().shape).to(DEVICE)
         self.actor = ActorNetwork(args, state_dims, num_actions)
         self.value_net = ValueNetwork(args, state_dims, num_actions)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
         self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
+        self.trace = torch.zeros(len(self.value_net.state_dict().items())).to(DEVICE)
         print(self.value_net)
         print(self.opt_value)
     
@@ -41,7 +41,7 @@ class TDLambda(nn.Module):
 
     def reset_trace(self, step_count):
         if step_count==0:
-            self.trace = torch.zeros(self.value_net.parameters().shape).to(DEVICE)
+            self.trace = torch.zeros(len(self.value_net.state_dict().items())).to(DEVICE)
         return self.trace
 
 

@@ -5,23 +5,25 @@ import argparse
 import time
 import torch
 import csv
+import MDPs
+import Pytorch
 import tensorflow as tf
 from datetime import datetime
 
-from Pytorch import *
+# from Pytorch import *
 from Tensorflow import *
-from MDPs import *
+# from MDPs import *
 from utils.utils import to_np, to_tensor, to_torch
 from traces.traces import replacing_trace, accumulating_trace, dutch_trace
 
 start_time = time.time()
 
-def build parser():
+def build_parser():
     parser = argparse.ArgumentParser(description='Deep Eligibility Traces Args')
     parser.add_argument('--alg', type=str, default="TDLambda",
                         help='Trace algorithm to be used (default: TDLambda)')
-    parser.add_argument('--log_dir', type=str, default="/log/",
-                        help='Directory for storing logs (default: /log/)')
+    parser.add_argument('--log_dir', type=str, default="log/",
+                        help='Directory for storing logs (default: log/)')
     parser.add_argument('--env', type=str, default="CyclicMDP",
                         help='Toy environment (default: CyclicMDP)')
     parser.add_argument('--lib', type=str, default="torch",
@@ -53,7 +55,7 @@ def train(args, env, policy, log_dict):
     ep_reward = 0
     ep_loss = 0
     while steps < args.num_steps:
-        action = policy.get_action(state)
+        action = policy.get_actions(state)
         next_state, reward, done, _ = env.step(action)
         ep_reward += reward
         steps += 1

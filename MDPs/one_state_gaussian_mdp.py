@@ -29,7 +29,7 @@ class OneStateGaussianMDP:
         # left action
         else:
             # transition to B
-            if self.current_state = 1:
+            if self.current_state == 1:
                 self.current_state += 1
                 reward = 0
             # gaussian reward and terminate
@@ -38,7 +38,7 @@ class OneStateGaussianMDP:
                 self.end = True
 
         # check step counter
-        if self.step_count = 1000:
+        if self.step_count == 1000:
             self.end = True
 
         state = np.zeros(self.num_states)

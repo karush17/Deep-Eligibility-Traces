@@ -7,7 +7,7 @@ from datetime import datetime
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-def to_np(args.lib, x):
+def to_np(args, x):
     if args.lib=='torch':
     	return x.detach().cpu().numpy()
     else:
@@ -54,8 +54,8 @@ def res_plot(log_dir):
     plt.savefig('plot_error.png', dpi=600, bbox_inches='tight')
 
 def save_logs(args, log_dir):
-	with open(args.alg+'_'+args.env'_'+str(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))+'.csv', 'w') as csv_file:  
-    writer = csv.writer(csv_file)
-    for key, value in log_dir.items():
-       writer.writerow([key, value])
+    with open(args.alg+'_'+args.env+'_'+str(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))+'.csv', 'w') as csv_file:
+        writer = csv.writer(csv_file)
+        for key, value in log_dir.items():
+            writer.writerow([key, value])
 

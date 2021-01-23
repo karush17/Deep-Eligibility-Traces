@@ -35,7 +35,7 @@ class CyclicMDP:
             self.end = True
 
         # check step counter
-        if self.step_count = 1000:
+        if self.step_count == 1000:
             self.end = True
 
         state = np.zeros(self.num_states)

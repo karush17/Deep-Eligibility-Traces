@@ -1,3 +1,3 @@
-from pytorch_networks import *
-from tf_networks import *
+from networks.pytorch_networks import *
+from networks.tf_networks import *
 
