@@ -14,8 +14,8 @@ class TDLambda(nn.Module):
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
-        self.actor = ActorNetwork(args, state_dims, num_actions)
-        self.value_net = ValueNetwork(args, state_dims, num_actions)
+        self.actor = ActorNetwork(args, state_dims, num_actions).to(DEVICE)
+        self.value_net = ValueNetwork(args, state_dims, num_actions).to(DEVICE)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
         self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
         self.trace = torch.zeros(len(self.value_net.state_dict().items())).to(DEVICE)
@@ -29,14 +29,14 @@ class TDLambda(nn.Module):
         return self.actor.get_actions(states)
     
     def update(self, args, states, reward, next_states, step_count):
-        opt_value.zero_grad()
+        self.opt_value.zero_grad()
         vals = self.value_net(states)
         td_error = reward + self.args.gamma*self.value_net(next_states) - vals
         self.trace = self.reset_trace(step_count) 
         for idx, p in enumerate(self.value_net.parameters()):
             self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + ag.grad(vals, p)
             p.grad = torch.FloatTensor(-td_error*self.trace[idx]).clone()
-        opt_value.step()
+        self.opt_value.step()
         return td_error
 
     def reset_trace(self, step_count):

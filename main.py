@@ -56,6 +56,7 @@ def train(args, env, policy, log_dict):
     ep_loss = 0
     while steps < args.num_steps:
         action = policy.get_actions(state)
+        print(action)
         next_state, reward, done, _ = env.step(action)
         ep_reward += reward
         steps += 1

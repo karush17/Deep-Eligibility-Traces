@@ -8,6 +8,7 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 class ActorNetwork(nn.Module):
     def __init__(self, args, num_inputs, num_actions):
         super(ActorNetwork, self).__init__()
+        self.args = args
         self.l1 = nn.Linear(num_inputs, 128)
         self.relu1 = nn.ReLU()
         self.l2 = nn.Linear(128, 128)
@@ -17,7 +18,8 @@ class ActorNetwork(nn.Module):
         self.l4 = nn.Linear(128, num_actions)
 
     def forward(self, states):
-        x = to_torch(states.to(DEVICE))
+        x = to_torch(states)
+        x = to_torch(x)
         x = self.l1(x)
         x = self.relu1(x)
         x = self.l2(x)
@@ -28,13 +30,16 @@ class ActorNetwork(nn.Module):
         return x
     
     def get_actions(self, states):
-        x = self.forward(states.to(DEVICE))
-        return np.squeeze(x, axis=-1)
+        x = to_torch(states)
+        x = self.forward(x)
+        x = to_np(self.args, x)
+        return np.squeeze(np.argmax(x, axis=0), axis=-1)
 
 
 class ValueNetwork(nn.Module):
     def __init__(self, args, num_inputs, num_actions):
         super(ValueNetwork, self).__init__()
+        self.args = args
         self.l1 = nn.Linear(num_inputs, 128)
         self.relu1 = nn.ReLU()
         self.l2 = nn.Linear(128, 128)

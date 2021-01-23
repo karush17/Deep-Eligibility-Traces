@@ -11,11 +11,11 @@ def to_np(args, x):
     if args.lib=='torch':
     	return x.detach().cpu().numpy()
     else:
-        return tf.make_ndarray(x)
+        return tf.make_ndarray(tf.stop_gradient(x))
 
 def to_torch(x, **kwargs):
 	if torch.is_tensor(x):
-		return x
+		return x.to(DEVICE)
 	else:
 		return torch.tensor(x, device=DEVICE, dtype=torch.float32, **kwargs)
 
