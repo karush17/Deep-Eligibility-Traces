@@ -95,7 +95,7 @@ def main():
 
     log_dict = {}
     log_dict['rewards'] = []
-    log_dict['loss'] = []
+    log_dict['td_error'] = []
     log_dict['ep_count'] = []
 
     env_list = ['CyclicMDP', 'OneStateGaussianMDP', 'OneStateMDP']
