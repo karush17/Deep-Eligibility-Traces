@@ -71,8 +71,10 @@ def train(args, env, policy, log_dict):
             ep_step_count = 0
             done = False
             log_dict['rewards'].append(ep_reward)
-            log_dict['td_error'].append(ep_loss.data)
+            log_dict['td_error'].append(to_np(args, ep_loss)[0])
             log_dict['ep_count'].append(steps)
+            ep_loss = 0
+            ep_reward = 0
         
         if steps % args.log_interval==0:
             print('\tSteps: ', steps,'/', args.num_steps,'\tReward:', 
