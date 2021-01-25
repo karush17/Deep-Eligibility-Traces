@@ -2,6 +2,7 @@ import os
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.autograd as ag
 from networks.pytorch_networks import *
 from utils.utils import *
@@ -28,15 +29,14 @@ class TDLambda(nn.Module):
     def get_actions(self, states):
         return self.actor.get_actions(states)
     
-    def update(self, args, states, reward, next_states, step_count):
+    def update(self, args, states, reward, next_states, done, step_count):
         self.opt_actor.zero_grad()
         vals = self.actor(states)#[self.actor.get_actions(states)]
         next_vals = to_np(args, self.actor(next_states))
         # print(vals)
         # print(next_vals)
-#        next_vals = np.random.choice(next_vals, 1, p=next_vals)[0]
-        # print(next_vals)
-        target = reward + self.args.gamma*next_vals
+        # next_vals = np.random.choice(next_vals, 1)[0]
+        target = reward + self.args.gamma*next_vals*(1 - done)
         td_error = torch.mean((to_torch(target).detach() - vals)**2)
         td_error.backward()
         # self.trace = self.reset_trace(step_count) 

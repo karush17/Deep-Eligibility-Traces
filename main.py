@@ -14,7 +14,7 @@ from datetime import datetime
 # from Pytorch import *
 from Tensorflow import *
 # from MDPs import *
-from utils.utils import to_np, to_tensor, to_torch
+from utils.utils import *
 from traces.traces import replacing_trace, accumulating_trace, dutch_trace
 
 start_time = time.time()
@@ -45,6 +45,8 @@ def build_parser():
                         help='maximum number of steps (default: 100000)')
     parser.add_argument('--log_interval', type=int, default=1000, metavar='N',
                         help='save model and results every xth step (default: 10000)')
+    parser.add_argument('--window_size', type=int, default=10,
+                        help='Window length for averaging returns in plots (default: 10)')
 
     return parser
 
@@ -62,7 +64,7 @@ def train(args, env, policy, log_dict):
         steps += 1
         ep_step_count += 1
 
-        loss = policy.update(args, state, reward, next_state, ep_step_count)
+        loss = policy.update(args, state, reward, next_state, done, ep_step_count)
         ep_loss += loss.item()
 
         state = next_state
@@ -73,6 +75,9 @@ def train(args, env, policy, log_dict):
             done = False
             log_dict['rewards'].append(ep_reward)
             log_dict['td_error'].append(ep_loss)
+            if len(log_dict['rewards']) > args.window_size:
+                log_dict['average_rewards'].append(np.mean(log_dict['rewards'][-args.window_size]))
+                log_dict['average_error'].append(np.mean(log_dict['td_error'][-args.window_size]))
             log_dict['ep_count'].append(steps)
             ep_loss = 0
             ep_reward = 0
@@ -97,6 +102,8 @@ def main():
 
     log_dict = {}
     log_dict['rewards'] = []
+    log_dict['average_rewards'] = []
+    log_dict['average_error'] = []
     log_dict['td_error'] = []
     log_dict['ep_count'] = []
 
@@ -128,8 +135,8 @@ def main():
         policy = getattr(Tensorflow, args.alg)(args, state_dims, num_actions)
 
     log_dict = train(args, env, policy, log_dict)
-    res_plot(log_dict)
-    save_logs(log_dict)
+    res_plot(args, log_dict)
+    save_logs(args, log_dict)
 
 
 if __name__=="__main__":
