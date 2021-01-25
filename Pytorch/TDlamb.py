@@ -34,7 +34,7 @@ class TDLambda(nn.Module):
         next_vals = to_np(args, self.actor(next_states))
         next_vals = np.random.choice(next_vals, 1, p=next_vals)[0]
         target = reward + self.args.gamma*next_vals
-        td_error = target - vals
+        td_error = to_torch(target).detach() - vals
         self.trace = self.reset_trace(step_count) 
         eval_gradients = ag.grad(vals, self.actor.parameters())
         for idx, p in enumerate(self.actor.parameters()):

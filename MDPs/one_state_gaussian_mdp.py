@@ -34,7 +34,7 @@ class OneStateGaussianMDP:
                 reward = 0
             # gaussian reward and terminate
             else:
-                reward = np.random.normal(loc=-0.1, scale=1, size=1)
+                reward = np.random.normal(loc=-0.1, scale=1, size=None)
                 self.end = True
 
         # check step counter
