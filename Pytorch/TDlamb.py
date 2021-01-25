@@ -30,16 +30,20 @@ class TDLambda(nn.Module):
     
     def update(self, args, states, reward, next_states, step_count):
         self.opt_actor.zero_grad()
-        vals = self.actor(states)[self.actor.get_actions(states)]
+        vals = self.actor(states)#[self.actor.get_actions(states)]
         next_vals = to_np(args, self.actor(next_states))
-        next_vals = np.random.choice(next_vals, 1, p=next_vals)[0]
+        # print(vals)
+        # print(next_vals)
+#        next_vals = np.random.choice(next_vals, 1, p=next_vals)[0]
+        # print(next_vals)
         target = reward + self.args.gamma*next_vals
-        td_error = to_torch(target).detach() - vals
-        self.trace = self.reset_trace(step_count) 
-        eval_gradients = ag.grad(vals, self.actor.parameters())
-        for idx, p in enumerate(self.actor.parameters()):
-            self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
-            p.grad = -td_error*self.trace[idx]
+        td_error = torch.mean((to_torch(target).detach() - vals)**2)
+        td_error.backward()
+        # self.trace = self.reset_trace(step_count) 
+        # eval_gradients = ag.grad(vals, self.actor.parameters())
+        # for idx, p in enumerate(self.actor.parameters()):
+        #     self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
+        #     p.grad = -td_error*self.trace[idx]
         self.opt_actor.step()
         return td_error
 

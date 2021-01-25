@@ -16,7 +16,6 @@ class ActorNetwork(nn.Module):
         self.l3 = nn.Linear(128, 128)
         self.relu3 = nn.ReLU()
         self.l4 = nn.Linear(128, num_actions)
-        self.l5 = nn.Softmax()
 
     def forward(self, states):
         x = to_torch(states)
@@ -28,7 +27,6 @@ class ActorNetwork(nn.Module):
         x = self.l3(x)
         x = self.relu3(x)
         x = self.l4(x)
-        x = self.l5(x)
         return x
     
     def get_actions(self, states):

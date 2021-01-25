@@ -31,11 +31,11 @@ def build_parser():
                         help='Deep Learning Library to use (default: torch)')
     parser.add_argument('--eval', type=bool, default=True,
                         help='Evaluates a policy a policy every 10 episode (default: True)')
-    parser.add_argument('--gamma', type=float, default=0.99, metavar='G',
+    parser.add_argument('--gamma', type=float, default=0.95, metavar='G',
                         help='discount factor for reward (default: 0.99)')
     parser.add_argument('--lamb', type=float, default=0.5, metavar='G',
                         help='lambda value for trace updates (default: 0.95)')
-    parser.add_argument('--lr', type=float, default=0.2, metavar='G',
+    parser.add_argument('--lr', type=float, default=0.01, metavar='G',
                         help='learning rate of agent (default: 0.01)')
     parser.add_argument('--seed', type=int, default=123456, metavar='N',
                         help='random seed (default: 123456)')
