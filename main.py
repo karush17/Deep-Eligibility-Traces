@@ -41,7 +41,7 @@ def build_parser():
                         help='random seed (default: 123456)')
     parser.add_argument('--batch_size', type=int, default=64, metavar='N',
                         help='batch size (default: 64)')
-    parser.add_argument('--num_steps', type=float, default=100001, metavar='N',
+    parser.add_argument('--num_steps', type=float, default=20001, metavar='N',
                         help='maximum number of steps (default: 100000)')
     parser.add_argument('--log_interval', type=int, default=1000, metavar='N',
                         help='save model and results every xth step (default: 10000)')
