@@ -45,8 +45,8 @@ def build_parser():
                         help='maximum number of steps (default: 100000)')
     parser.add_argument('--log_interval', type=int, default=1000, metavar='N',
                         help='save model and results every xth step (default: 10000)')
-    parser.add_argument('--window_size', type=int, default=10,
-                        help='Window length for averaging returns in plots (default: 10)')
+    parser.add_argument('--window_size', type=int, default=50,
+                        help='Window length for averaging returns in plots (default: 50)')
 
     return parser
 
