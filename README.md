@@ -7,10 +7,10 @@ This repository consists of implementations of Eligiblity Traces and correspondi
 Following algorithms are available in the current version-
 
 ### PyTorch
-|Algorithm|Link|Implementation|
-|:-------:|:--:|:------------:|
-|Sarsa|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[sarsa.py](Pytorch/sarsa.py)|
-|TD-lambda|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|[TDlamb.py](TDlamb.py)|
+|Algorithm|Link|Implementation|Notes|
+|:-------:|:--:|:------------:|:---:|
+|Sarsa|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[sarsa.py](Pytorch/sarsa.py)|Works well|
+|TD-lambda|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|[TDlamb.py](TDlamb.py)|Requires tuning|
 
 <!-- ### Tensorflow 2.0
 |Algorithm|Link|Implementation|
