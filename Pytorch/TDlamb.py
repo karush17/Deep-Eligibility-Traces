@@ -29,7 +29,7 @@ class TDLambda(nn.Module):
         return self.actor.get_actions(states)
     
     def update(self, args, states, reward, next_states, step_count):
-        self.opt_value.zero_grad()
+        self.opt_actor.zero_grad()
         vals = self.actor(states)[self.actor.get_actions(states)]
         next_vals = to_np(args, self.actor(next_states))
         next_vals = np.random.choice(next_vals, 1, p=next_vals)[0]
@@ -40,7 +40,7 @@ class TDLambda(nn.Module):
         for idx, p in enumerate(self.actor.parameters()):
             self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
             p.grad = -td_error*self.trace[idx]
-        self.opt_value.step()
+        self.opt_actor.step()
         return td_error
 
     def reset_trace(self, step_count):
