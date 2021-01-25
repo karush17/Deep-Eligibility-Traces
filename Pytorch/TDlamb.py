@@ -19,7 +19,7 @@ class TDLambda(nn.Module):
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
         self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
         self.trace = {}
-        print(self.value_net)
+        print(self.actor)
         print(self.opt_value)
     
     def forward(self, states):
@@ -30,24 +30,23 @@ class TDLambda(nn.Module):
     
     def update(self, args, states, reward, next_states, step_count):
         self.opt_value.zero_grad()
-        vals = self.value_net(states)
-        td_error = reward + self.args.gamma*self.value_net(next_states) - vals
+        vals = self.actor(states)[self.actor.get_actions(states)]
+        next_vals = to_np(args, self.actor(next_states))
+        next_vals = np.random.choice(next_vals, 1, p=next_vals)[0]
+        target = reward + self.args.gamma*next_vals
+        td_error = target - vals
         self.trace = self.reset_trace(step_count) 
-        # with torch.no_grad():
-        eval_gradients = ag.grad(vals, self.value_net.parameters())
-        # print(eval_gradients)
-        for idx, p in enumerate(self.value_net.parameters()):
+        eval_gradients = ag.grad(vals, self.actor.parameters())
+        for idx, p in enumerate(self.actor.parameters()):
             self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
-            # print(td_error, self.trace[idx])
             p.grad = -td_error*self.trace[idx]
         self.opt_value.step()
         return td_error
 
     def reset_trace(self, step_count):
         if step_count==1:
-            for idx, p in enumerate(self.value_net.parameters()):
+            for idx, p in enumerate(self.actor.parameters()):
                 self.trace[idx] = torch.zeros(p.data.shape).to(DEVICE)
-            # self.trace = torch.zeros(len(self.value_net.state_dict().items())).to(DEVICE)
         return self.trace
 
 
