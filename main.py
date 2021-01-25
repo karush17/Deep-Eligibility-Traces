@@ -35,7 +35,7 @@ def build_parser():
                         help='discount factor for reward (default: 0.99)')
     parser.add_argument('--lamb', type=float, default=0.5, metavar='G',
                         help='lambda value for trace updates (default: 0.95)')
-    parser.add_argument('--lr', type=float, default=0.01, metavar='G',
+    parser.add_argument('--lr', type=float, default=0.008, metavar='G',
                         help='learning rate of agent (default: 0.01)')
     parser.add_argument('--seed', type=int, default=123456, metavar='N',
                         help='random seed (default: 123456)')

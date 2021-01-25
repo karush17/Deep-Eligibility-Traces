@@ -38,7 +38,7 @@ def dict_to_tensor(d):
 		for key, val in d.items()
 	}
 
-def res_plot(log_dir):
+def res_plot(args, log_dir):
 	# plot rewards
     plt.figure()
     plt.title('Average Returns', fontsize=24)
