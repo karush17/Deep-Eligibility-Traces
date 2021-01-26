@@ -45,9 +45,7 @@ class ValueNetwork(nn.Module):
         self.relu1 = nn.ReLU()
         self.l2 = nn.Linear(128, 128)
         self.relu2 = nn.ReLU()
-        self.l3 = nn.Linear(128, 128)
-        self.relu3 = nn.ReLU()
-        self.l4 = nn.Linear(128, 1)
+        self.l3 = nn.Linear(128, 1)
 
     def forward(self, states):
         x = to_torch(states)
@@ -56,8 +54,6 @@ class ValueNetwork(nn.Module):
         x = self.l2(x)
         x = self.relu2(x)
         x = self.l3(x)
-        x = self.relu3(x)
-        x = self.l4(x)
         return x
 
 
