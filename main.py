@@ -11,9 +11,6 @@ import Pytorch
 import tensorflow as tf
 from datetime import datetime
 
-# from Pytorch import *
-from Tensorflow import *
-# from MDPs import *
 from utils.utils import *
 from traces.traces import replacing_trace, accumulating_trace, dutch_trace
 
@@ -52,6 +49,7 @@ def build_parser():
 
 
 def train(args, env, policy, log_dict):
+    buffer = ReplayBuffer(1000)
     state = env.reset()
     steps = 0
     ep_step_count = 0
@@ -64,9 +62,10 @@ def train(args, env, policy, log_dict):
         steps += 1
         ep_step_count += 1
 
-        loss = policy.update(args, state, reward, next_state, done, ep_step_count)
+        loss = policy.update(args, buffer, state, reward, next_state, done, ep_step_count)
         ep_loss += loss.item()
 
+        buffer.push(state, action, reward, next_state, done)
         state = next_state
 
         if done:

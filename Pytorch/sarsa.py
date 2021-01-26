@@ -29,7 +29,7 @@ class SARSA(nn.Module):
     def get_actions(self, states):
         return self.actor.get_actions(states)
     
-    def update(self, args, states, reward, next_states, done, step_count):
+    def update(self, buffer, args, states, reward, next_states, done, step_count):
         self.opt_actor.zero_grad()
         vals = self.actor(states)#[self.actor.get_actions(states)]
         next_vals = to_np(args, self.actor(next_states))
