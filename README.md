@@ -3,13 +3,26 @@
 ## Introduction
 This repository consists of implementations of Eligiblity Traces and corresponding algorithms in the deep learning setting. Algorithms are implemented in [`PyTorch`](Pytorch/) and [`Tensorflow 2.0`](Tensorflow/) on a range of problems. Custom toy problems are provided in the [`MDPs`](MDPs/) folder.
 
+## Baseline Algorithms
+Following are the baseline algorithms combined with trace-based updates-
+
+|Algorithm|Link|Implementation|Notes|
+|:-------:|:--:|:------------:|:---:|
+|Sarsa|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`sarsa.py`](Pytorch/sarsa.py)|Works well|
+|Double Sarsa|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`doublesarsa.py`](Pytorch/doublesarsa.py)|Works well|
+|Q-Learning|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`qlearning.py`](Pytorch/qlearning.py)|Works well|
+|Double Q-Learning|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`doubleqlearning.py`](Pytorch/doubleqlearning.py)|Works well|
+|Expected Sarsa|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`expectedsarsa.py`](Pytorch/expectedsarsa.py)|Works well|
+|Double Expected Sarsa|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`doubleexpectedsarsa.py`](Pytorch/doubleexpectedsarsa.py)|Works well|
+
+
 ## Trace Algorithms
 Following algorithms are available in the current version-
 
 ### PyTorch
+
 |Algorithm|Link|Implementation|Notes|
 |:-------:|:--:|:------------:|:---:|
-|Sarsa|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`sarsa.py`](Pytorch/sarsa.py)|Works well|
 |TD-lambda|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|[`TDlamb.py`](Pytorch/TDlamb.py)|Requires tuning|
 
 <!-- ### Tensorflow 2.0
@@ -28,8 +41,21 @@ Following is the list of custom toy environments-
 |One-state Gaussian MDP|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[link](MDPs/one_state_gaussian_mdp.py)|
 
 ## Usage
-Notes on running implementations to be updated soon.
 
+To run an implementation, use the following command- 
+```
+python main.py --alg <ALGORITHM> --env <ENV> --lib <LIBRARY> --trace <TRACE> --lamb <LAMBDA> --num_steps <STEPS>
+```
+
+For example, to run Q-Learning on the CartPole-v0 environment using PyTorch library with replacing trace and lambda=0.5, use the following-
+```
+python main.py --alg QLearning --env CartPole-v0 --lib torch --trace replacing --lamb 0.5 --num_steps 10000
+``` 
+
+To view the full list of arguments run the following-
+```
+python main.py --help
+```
 ## Citation
 If you find these implementations helpful then please cite the following-
 ```
