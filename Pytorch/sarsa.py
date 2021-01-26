@@ -1,4 +1,5 @@
 import os
+import random
 import numpy as np
 import torch
 import torch.nn as nn
@@ -26,11 +27,11 @@ class SARSA(nn.Module):
     def forward(self, states):
         return self.actor(states)
     
-    def get_actions(self, epsilon, states):
-        return self.actor.get_actions(epsilon, states)
+    def get_actions(self, steps, states):
+        return self.actor.get_actions(steps, states)
     
-    def update(self, buffer, args, states, reward, next_states, done, step_count):
-        states, actions, rewards, next_states, dones = buffer.sample(args.batch_size)
+    def update(self, replay_buffer, args, states, reward, next_states, done, step_count):
+        states, actions, rewards, next_states, dones = replay_buffer.sample(args.batch_size)
         states = to_torch(states)
         actions = to_torch(actions)
         rewards = to_torch(rewards)

@@ -3,8 +3,6 @@ import sys
 import numpy as np
 import argparse
 import time
-import math
-import random
 import torch
 import csv
 import gym
@@ -48,7 +46,7 @@ def build_parser():
                         help='Epsilon start for greedy exploration (default: 1)')
     parser.add_argument('--epsilon_final', type=float, default=0.01,
                         help='Epsilon final for greedy exploration (default: 0.01)')
-    parser.add_argument('--epsilon_decay', type=int, default=500,
+    parser.add_argument('--epsilon_decay', type=float, default=500,
                         help='Epsilon decay for greedy exploration (default: 500)')
     parser.add_argument('--window_size', type=int, default=50,
                         help='Window length for averaging returns in plots (default: 50)')
@@ -57,25 +55,25 @@ def build_parser():
 
 
 def train(args, env, policy, log_dict):
-    epsilon = lambda steps: args.epsilon_final + (args.epsilon_start - args.epsilon_final) * math.exp(-1. * steps / args.epsilon_decay)
-    buffer = ReplayBuffer(1000)
+    replay_buffer = ReplayBuffer(1000)
     state = env.reset()
+    loss = torch.FloatTensor([0])
     steps = 0
     ep_step_count = 0
     ep_reward = 0
     ep_loss = 0
     while steps < args.num_steps:
-        action = policy.get_actions(state, epsilon)
+        action = policy.get_actions(steps, state)
         next_state, reward, done, _ = env.step(action)
         ep_reward += reward
         steps += 1
         ep_step_count += 1
 
-        if len(buffer) > args.batch_size:
-            loss = policy.update(args, buffer, state, reward, next_state, done, ep_step_count)
+        if len(replay_buffer) > args.batch_size:
+            loss = policy.update(args, replay_buffer, state, reward, next_state, done, ep_step_count)
         ep_loss += loss.item()
 
-        buffer.push(state, action, reward, next_state, done)
+        replay_buffer.push(state, action, reward, next_state, done)
         state = next_state
 
         if done:

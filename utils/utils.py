@@ -1,7 +1,9 @@
 import os
 import csv
+import math
 import numpy as np
 import torch
+import random
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -79,4 +81,7 @@ def save_logs(args, log_dir):
         writer = csv.writer(csv_file)
         for key, value in log_dir.items():
             writer.writerow([key, value])
+
+def epsilon_by_step(args, steps):
+    return args.epsilon_final + (args.epsilon_start - args.epsilon_final) * math.exp(-1. * steps / args.epsilon_decay)
 

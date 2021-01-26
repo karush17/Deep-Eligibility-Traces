@@ -27,8 +27,8 @@ class ActorNetwork(nn.Module):
         x = self.l3(x)
         return x
     
-    def get_actions(self, epsilon, states):
-        if random.random() > epsilon:
+    def get_actions(self, steps, states):
+        if random.random() > epsilon_by_step(self.args, steps):
             x = to_torch(states)
             x = self.forward(x)
             x = to_np(self.args, x)
