@@ -37,7 +37,9 @@ class SARSA(nn.Module):
         next_states = to_torch(next_states)
         dones = to_torch(dones)
         vals = self.actor(states)#[self.actor.get_actions(states)]
+        vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states)
+        next_vals = np.random.choice(np.arange(len(next_vals)), p=to_np(args, F.softmax(next_vals)))
         # print(vals)
         # print(next_vals)
         # next_vals = np.random.choice(next_vals, 1)[0]
