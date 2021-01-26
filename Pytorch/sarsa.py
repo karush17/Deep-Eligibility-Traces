@@ -30,21 +30,24 @@ class SARSA(nn.Module):
     def get_actions(self, steps, states):
         return self.actor.get_actions(steps, states)
     
-    def update(self, replay_buffer, args, states, reward, next_states, done, step_count):
-        states, actions, rewards, next_states, dones = replay_buffer.sample(args.batch_size)
+    def update(self, replay_buffer, states, reward, next_states, done, step_count):
+        batch_size = self.args.batch_size
+        states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
         states = to_torch(states)
-        actions = to_torch(actions)
+        actions = to_torch(actions).type(torch.int64)
         rewards = to_torch(rewards)
         next_states = to_torch(next_states)
         dones = to_torch(dones)
         vals = self.actor(states)#[self.actor.get_actions(states)]
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states)
-        next_vals = np.random.choice(np.arange(len(next_vals)), p=to_np(args, F.softmax(next_vals)))
+        new_next_vals = torch.zeros([self.args.batch_size,1], dtype=torch.float32).to(DEVICE)
+        for i in range(len(next_vals)):
+            new_next_vals[i] = to_torch(np.random.choice(to_np(self.args, next_vals[i,:]), p=to_np(self.args, F.softmax(next_vals[i,:]))))
         # print(vals)
         # print(next_vals)
         # next_vals = np.random.choice(next_vals, 1)[0]
-        target = reward + self.args.gamma*next_vals*(1 - dones)
+        target = reward + self.args.gamma*new_next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
         td_error.backward()

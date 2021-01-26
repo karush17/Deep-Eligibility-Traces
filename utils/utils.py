@@ -12,7 +12,7 @@ from collections import deque
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-class ReplayBuffer(object):
+class ReplayBuffer():
     def __init__(self, capacity):
         self.buffer = deque(maxlen=capacity)
     

@@ -28,16 +28,16 @@ def build_parser():
                         help='Deep Learning Library to use (default: torch)')
     parser.add_argument('--eval', type=bool, default=True,
                         help='Evaluates a policy a policy every 10 episode (default: True)')
-    parser.add_argument('--gamma', type=float, default=0.95, metavar='G',
+    parser.add_argument('--gamma', type=float, default=0.99, metavar='G',
                         help='discount factor for reward (default: 0.99)')
     parser.add_argument('--lamb', type=float, default=0.5, metavar='G',
                         help='lambda value for trace updates (default: 0.95)')
-    parser.add_argument('--lr', type=float, default=0.008, metavar='G',
+    parser.add_argument('--lr', type=float, default=0.001, metavar='G',
                         help='learning rate of agent (default: 0.01)')
     parser.add_argument('--seed', type=int, default=123456, metavar='N',
                         help='random seed (default: 123456)')
     parser.add_argument('--batch_size', type=int, default=32, metavar='N',
-                        help='batch size (default: 64)')
+                        help='batch size (default: 32)')
     parser.add_argument('--num_steps', type=float, default=10001, metavar='N',
                         help='maximum number of steps (default: 100000)')
     parser.add_argument('--log_interval', type=int, default=500, metavar='N',
@@ -70,7 +70,7 @@ def train(args, env, policy, log_dict):
         ep_step_count += 1
 
         if len(replay_buffer) > args.batch_size:
-            loss = policy.update(args, replay_buffer, state, reward, next_state, done, ep_step_count)
+            loss = policy.update(replay_buffer, state, reward, next_state, done, ep_step_count)
         ep_loss += loss.item()
 
         replay_buffer.push(state, action, reward, next_state, done)
