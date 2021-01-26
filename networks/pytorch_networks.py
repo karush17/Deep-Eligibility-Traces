@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import torch
 import torch.nn as nn
 from utils.utils import *
@@ -8,14 +9,13 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 class ActorNetwork(nn.Module):
     def __init__(self, args, num_inputs, num_actions):
         super(ActorNetwork, self).__init__()
+        self.num_actions = num_actions
         self.args = args
         self.l1 = nn.Linear(num_inputs, 128)
         self.relu1 = nn.ReLU()
         self.l2 = nn.Linear(128, 128)
         self.relu2 = nn.ReLU()
-        self.l3 = nn.Linear(128, 128)
-        self.relu3 = nn.ReLU()
-        self.l4 = nn.Linear(128, num_actions)
+        self.l3 = nn.Linear(128, num_actions)
 
     def forward(self, states):
         x = to_torch(states)
@@ -25,15 +25,16 @@ class ActorNetwork(nn.Module):
         x = self.l2(x)
         x = self.relu2(x)
         x = self.l3(x)
-        x = self.relu3(x)
-        x = self.l4(x)
         return x
     
-    def get_actions(self, states):
-        x = to_torch(states)
-        x = self.forward(x)
-        x = to_np(self.args, x)
-        return np.squeeze(np.argmax(x, axis=0), axis=-1)
+    def get_actions(self, epsilon, states):
+        if random.random() > epsilon:
+            x = to_torch(states)
+            x = self.forward(x)
+            x = to_np(self.args, x)
+            return np.squeeze(np.argmax(x, axis=0), axis=-1)
+        else:
+            return random.randrange(self.num_actions)
 
 
 class ValueNetwork(nn.Module):
