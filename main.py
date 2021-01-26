@@ -38,11 +38,11 @@ def build_parser():
                         help='learning rate of agent (default: 0.01)')
     parser.add_argument('--seed', type=int, default=123456, metavar='N',
                         help='random seed (default: 123456)')
-    parser.add_argument('--batch_size', type=int, default=64, metavar='N',
+    parser.add_argument('--batch_size', type=int, default=32, metavar='N',
                         help='batch size (default: 64)')
-    parser.add_argument('--num_steps', type=float, default=20001, metavar='N',
+    parser.add_argument('--num_steps', type=float, default=10001, metavar='N',
                         help='maximum number of steps (default: 100000)')
-    parser.add_argument('--log_interval', type=int, default=1000, metavar='N',
+    parser.add_argument('--log_interval', type=int, default=500, metavar='N',
                         help='save model and results every xth step (default: 10000)')
     parser.add_argument('--epsilon_start', type=float, default=1,
                         help='Epsilon start for greedy exploration (default: 1)')
