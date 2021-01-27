@@ -50,7 +50,12 @@ class DoubleSARSA(nn.Module):
         self.opt_actor.zero_grad()
         td_error.backward()
         self.opt_actor.step()
+        self.update_target(step_count)
         return td_error
+
+    def update_target(self, step_count):
+        if step_count==1:
+            self.target_actor.load_state_dict(self.actor.state_dict())
 
     def reset_trace(self, step_count):
         if step_count==1:
