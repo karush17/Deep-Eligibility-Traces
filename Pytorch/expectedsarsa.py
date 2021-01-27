@@ -50,9 +50,15 @@ class ExpectedSARSA(nn.Module):
         return td_error
 
     def get_expectation(self, q_vals, epsilon):
-        best_act = q_vals.max(1)
-        sum_act = torch.sum(q_vals) - best_act
-        return (1-epsilon)*best_act + (epsilon/(self.num_actions-1))*sum_act
+        # get indices of best actions
+        idx = torch.argmax(q_vals, dim=1)
+        # gather best actions
+        best_acts = q_vals.gather(1, idx.unsqueeze(1)).squeeze(1)
+        # create mask to make best actions zero in the original tensor
+        mask = torch.ones_like(q_vals).scatter_(1, idx.unsqueeze(1), 0)
+        # get sub-optimal actions by applying mask
+        sub_acts = q_vals[mask.bool()].unsqueeze(1)
+        return (1-epsilon)*best_acts + (epsilon/(self.num_actions-1))*torch.sum(sub_acts, dim=1)
 
     def reset_trace(self, step_count):
         if step_count==1:

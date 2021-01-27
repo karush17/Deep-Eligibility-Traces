@@ -48,7 +48,7 @@ def build_parser():
                         help='Epsilon final for greedy exploration (default: 0.01)')
     parser.add_argument('--epsilon_decay', type=float, default=500,
                         help='Epsilon decay for greedy exploration (default: 500)')
-    parser.add_argument('--window_size', type=int, default=50,
+    parser.add_argument('--window_size', type=int, default=10,
                         help='Window length for averaging returns in plots (default: 50)')
 
     return parser
