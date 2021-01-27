@@ -44,7 +44,7 @@ class DoubleSARSA(nn.Module):
         next_vals = self.actor(next_states)
         next_q_vals = self.target_actor(next_states)
         next_actions = self.actor.get_actions(steps, next_states).type(torch.int64)
-        next_q_values = next_q_vals.gather(1, next_actions).squeeze(1)
+        next_q_values = next_q_vals.gather(1, next_actions.unsqueeze(1)).squeeze(1)
         target = rewards + self.args.gamma*next_q_values*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
