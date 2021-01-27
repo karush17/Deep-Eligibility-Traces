@@ -32,7 +32,8 @@ class ActorNetwork(nn.Module):
             x = to_torch(states)
             x = self.forward(x)
             x = to_np(self.args, x)
-            return np.squeeze(np.argmax(x, axis=0), axis=-1)
+            x = np.squeeze(np.argmax(x, axis=0), axis=-1) 
+            return x
         else:
             return random.randrange(self.num_actions)
 

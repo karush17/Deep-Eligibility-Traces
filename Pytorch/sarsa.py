@@ -41,13 +41,9 @@ class SARSA(nn.Module):
         vals = self.actor(states)#[self.actor.get_actions(states)]
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states)
-        new_next_vals = torch.zeros([self.args.batch_size,1], dtype=torch.float32).to(DEVICE)
-        for i in range(len(next_vals)):
-            new_next_vals[i] = to_torch(np.random.choice(to_np(self.args, next_vals[i,:]), p=to_np(self.args, F.softmax(next_vals[i,:]))))
-        # print(vals)
-        # print(next_vals)
-        # next_vals = np.random.choice(next_vals, 1)[0]
-        target = reward + self.args.gamma*new_next_vals*(1 - dones)
+        next_actions = torch.argmax(F.softmax(self.actor(next_states)), axis=1).type(torch.int64)
+        next_vals = next_vals.gather(1, next_actions.unsqueeze(1)).squeeze(1)
+        target = reward + self.args.gamma*next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
         td_error.backward()
