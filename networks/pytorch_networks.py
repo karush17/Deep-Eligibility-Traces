@@ -28,14 +28,26 @@ class ActorNetwork(nn.Module):
         return x
     
     def get_actions(self, steps, states):
-        if random.random() > epsilon_by_step(self.args, steps):
-            x = to_torch(states)
-            x = self.forward(x)
-            x = to_np(self.args, x)
-            x = np.squeeze(np.argmax(x, axis=0), axis=-1) 
-            return x
+        # select action during updates
+        if states.shape[0]==self.args.batch_size:
+            if random.random() > epsilon_by_step(self.args, steps):
+                x = to_torch(states)
+                x = self.forward(x)
+                x = torch.argmax(x, dim=1).type(torch.int64)
+                return x
+            else:
+                return to_torch(np.random.randint(low=0, high=self.num_actions, size=self.args.batch_size)).type(torch.int64)#random.randrange(self.num_actions)
+            
         else:
-            return random.randrange(self.num_actions)
+            # select action during policy execution
+            if random.random() > epsilon_by_step(self.args, steps):
+                x = to_torch(states)
+                x = self.forward(x)
+                x = to_np(self.args, x)
+                x = np.squeeze(np.argmax(x, axis=0), axis=-1) 
+                return x
+            else:
+                return random.randrange(self.num_actions)
 
 
 class ValueNetwork(nn.Module):

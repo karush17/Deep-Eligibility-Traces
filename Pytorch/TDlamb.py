@@ -31,7 +31,7 @@ class TDLambda(nn.Module):
     def get_actions(self, steps, states):
         return self.actor.get_actions(steps, states)
 
-    def update(self, replay_buffer, states, reward, next_states, done, step_count):
+    def update(self, replay_buffer, steps, step_count):
         batch_size = self.args.batch_size
         states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
         states = to_torch(states)

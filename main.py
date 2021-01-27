@@ -55,7 +55,7 @@ def build_parser():
 
 
 def train(args, env, policy, log_dict):
-    replay_buffer = ReplayBuffer(1000)
+    replay_buffer = ReplayBuffer(10000)
     state = env.reset()
     loss = torch.FloatTensor([0])
     steps = 0
@@ -70,7 +70,7 @@ def train(args, env, policy, log_dict):
         ep_step_count += 1
 
         if len(replay_buffer) > args.batch_size:
-            loss = policy.update(replay_buffer, state, reward, next_state, done, ep_step_count)
+            loss = policy.update(replay_buffer, steps, ep_step_count)
         ep_loss += loss.item()
 
         replay_buffer.push(state, action, reward, next_state, done)

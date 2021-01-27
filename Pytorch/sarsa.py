@@ -30,7 +30,7 @@ class SARSA(nn.Module):
     def get_actions(self, steps, states):
         return self.actor.get_actions(steps, states)
     
-    def update(self, replay_buffer, states, reward, next_states, done, step_count):
+    def update(self, replay_buffer, steps, step_count):
         batch_size = self.args.batch_size
         states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
         states = to_torch(states)
@@ -41,9 +41,9 @@ class SARSA(nn.Module):
         vals = self.actor(states)#[self.actor.get_actions(states)]
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states)
-        next_actions = torch.argmax(F.softmax(self.actor(next_states)), axis=1).type(torch.int64)
+        next_actions = self.actor.get_actions(steps, next_states).type(torch.int64)
         next_vals = next_vals.gather(1, next_actions.unsqueeze(1)).squeeze(1)
-        target = reward + self.args.gamma*next_vals*(1 - dones)
+        target = rewards + self.args.gamma*next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
         td_error.backward()
