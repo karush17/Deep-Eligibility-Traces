@@ -8,8 +8,8 @@ def replacing(args, state, trace):
     return trace
 
 def accumulating(args, actions, trace):
-    print('trace shape- ', trace[:,actions].shape)
-    return trace[:,actions] + 1
+    trace = trace.scatter_(1, actions.unsqueeze(1), 1)
+    return trace
 
 def dutch(args, state, trace):
     trace = args.gamma*args.lamb*trace + (1 - args.alpha*args.gamma*args.lamb*trace.T*state)*state
