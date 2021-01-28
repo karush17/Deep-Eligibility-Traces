@@ -8,6 +8,7 @@ import torch.autograd as ag
 from networks.pytorch_networks import *
 from utils.utils import *
 
+
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class QLearning(nn.Module):
@@ -20,7 +21,7 @@ class QLearning(nn.Module):
         self.value_net = ValueNetwork(args, state_dims, num_actions).to(DEVICE)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
         self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
-        self.trace = {}
+        self.trace = torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
         print(self.actor)
         print(self.opt_value)
     
@@ -42,18 +43,23 @@ class QLearning(nn.Module):
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states).max(1)[0]
         target = reward + self.args.gamma*next_vals*(1 - dones)
-        td_error = (target.detach() - vals).pow(2).mean()
+        td_error = (target.detach() - vals).pow(2)
+        if self.args.trace!='none':
+            if step_count==0:
+                self.trace = self.reset_trace()
+            self.trace  = self.update_trace(actions)
+            td_error *= self.trace.gather(1, actions.unsqueeze(1)).squeeze(1)
+        td_error = td_error.mean()
         self.opt_actor.zero_grad()
         td_error.backward()
         self.opt_actor.step()
         return td_error
 
-    def reset_trace(self, step_count):
-        if step_count==1:
-            for idx, p in enumerate(self.actor.parameters()):
-                self.trace[idx] = torch.zeros(p.data.shape).to(DEVICE)
-        return self.trace
+    def update_trace(self, actions):
+        trace = getattr(traces, self.args.trace)(self.args, actions, self.trace)
 
+    def reset_trace(self):
+            return torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
 
 
 

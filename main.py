@@ -24,6 +24,8 @@ def build_parser():
                         help='Directory for storing logs (default: log/)')
     parser.add_argument('--env', type=str, default="CyclicMDP",
                         help='Toy environment (default: CyclicMDP)')
+    parser.add_argument('--trace', type=str, default="dutch",
+                        help='Trace update (default: dutch)')
     parser.add_argument('--lib', type=str, default="torch",
                         help='Deep Learning Library to use (default: torch)')
     parser.add_argument('--eval', type=bool, default=True,
