@@ -45,11 +45,13 @@ class QLearning(nn.Module):
         next_vals = self.actor(next_states).max(1)[0]
         target = rewards + self.args.gamma*next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2)
+        # trace update
         if self.args.trace!='none':
             if step_count==0:
                 self.trace = self.reset_trace()
             self.trace  = self.update_trace(actions)
             td_error *= self.trace.gather(1, actions.unsqueeze(1)).squeeze(1)
+        # td update
         td_error = td_error.mean()
         self.opt_actor.zero_grad()
         td_error.backward()
