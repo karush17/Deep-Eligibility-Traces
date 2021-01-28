@@ -10,9 +10,9 @@ from utils.utils import *
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-class ExpectedSARSA(nn.Module):
+class DoubleExpectedSARSA(nn.Module):
     def __init__(self, args, state_dims, num_actions):
-        super(ExpectedSARSA, self).__init__()
+        super(DoubleExpectedSARSA, self).__init__()
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
