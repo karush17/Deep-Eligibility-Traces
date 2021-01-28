@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torch.autograd as ag
 from networks.pytorch_networks import *
 from utils.utils import *
+import traces
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
