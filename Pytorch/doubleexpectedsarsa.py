@@ -75,11 +75,8 @@ class DoubleExpectedSARSA(nn.Module):
     def update_trace(self, actions):
         return getattr(traces, self.args.trace)(self.args, actions, self.trace)
 
-    def reset_trace(self, step_count):
-        if step_count==1:
-            for idx, p in enumerate(self.actor.parameters()):
-                self.trace[idx] = torch.zeros(p.data.shape).to(DEVICE)
-        return self.trace
+    def reset_trace(self):
+            return torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
 
 
 

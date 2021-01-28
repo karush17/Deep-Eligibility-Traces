@@ -21,7 +21,7 @@ class DoubleQLearning(nn.Module):
         self.value_net = ValueNetwork(args, state_dims, num_actions).to(DEVICE)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
         self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
-        self.trace = {}
+        self.trace = torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
         print(self.actor)
         print(self.opt_value)
     
@@ -45,7 +45,15 @@ class DoubleQLearning(nn.Module):
         next_q_vals = self.target_actor(next_states)
         next_q_values = next_q_vals.gather(1, torch.max(next_vals, 1)[1].unsqueeze(1)).squeeze(1)
         target = rewards + self.args.gamma*next_q_values*(1 - dones)
-        td_error = (target.detach() - vals).pow(2).mean()
+        td_error = (target.detach() - vals).pow(2)
+        # trace update
+        if self.args.trace!='none':
+            if step_count==0:
+                self.trace = self.reset_trace()
+            self.trace  = self.update_trace(actions)
+            td_error *= self.trace.gather(1, actions.unsqueeze(1)).squeeze(1)
+        # td update
+        td_error = td_error.mean()
         self.opt_actor.zero_grad()
         td_error.backward()
         self.opt_actor.step()
@@ -56,11 +64,11 @@ class DoubleQLearning(nn.Module):
         if step_count==1:
             self.target_actor.load_state_dict(self.actor.state_dict())
 
-    def reset_trace(self, step_count):
-        if step_count==1:
-            for idx, p in enumerate(self.actor.parameters()):
-                self.trace[idx] = torch.zeros(p.data.shape).to(DEVICE)
-        return self.trace
+    def update_trace(self, actions):
+        return getattr(traces, self.args.trace)(self.args, actions, self.trace)
+
+    def reset_trace(self):
+            return torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
 
 
 
