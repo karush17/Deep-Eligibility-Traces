@@ -44,7 +44,7 @@ class DoubleQLearning(nn.Module):
         next_vals = self.actor(next_states)
         next_q_vals = self.target_actor(next_states)
         next_q_values = next_q_vals.gather(1, torch.max(next_vals, 1)[1].unsqueeze(1)).squeeze(1)
-        target = reward + self.args.gamma*next_q_values*(1 - dones)
+        target = rewards + self.args.gamma*next_q_values*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
         td_error.backward()

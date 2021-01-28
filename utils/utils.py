@@ -77,7 +77,7 @@ def res_plot(args, log_dir):
     plt.savefig(args.log_dir+'plot_error.png', dpi=600, bbox_inches='tight')
 
 def save_logs(args, log_dir):
-    with open(args.log_dir+args.alg+'_'+args.env+'_'+str(datetime.now().strftime("%d_%m_%Y__%H:%M:%S"))+'.csv', 'w') as csv_file:
+    with open(args.log_dir+args.alg+'_'+args.trace+'_'+args.env+'_'+str(datetime.now().strftime("%d_%m_%Y__%H:%M:%S"))+'.csv', 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in log_dir.items():
             writer.writerow([key, value])

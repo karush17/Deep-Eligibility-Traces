@@ -48,7 +48,7 @@ class TDLambda(nn.Module):
         # print(vals)
         # print(next_vals)
         # next_vals = np.random.choice(next_vals, 1)[0]
-        target = reward + self.args.gamma*new_next_vals*(1 - dones)
+        target = rewards + self.args.gamma*new_next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
         self.trace = self.reset_trace(step_count) 

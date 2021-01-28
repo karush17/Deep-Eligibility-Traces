@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torch.autograd as ag
 from networks.pytorch_networks import *
 from utils.utils import *
+import traces
 
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -42,13 +43,14 @@ class QLearning(nn.Module):
         vals = self.actor(states)
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states).max(1)[0]
-        target = reward + self.args.gamma*next_vals*(1 - dones)
+        target = rewards + self.args.gamma*next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2)
         if self.args.trace!='none':
             if step_count==0:
                 self.trace = self.reset_trace()
             self.trace  = self.update_trace(actions)
             td_error *= self.trace.gather(1, actions.unsqueeze(1)).squeeze(1)
+        print('td shape-', td_error.shape)
         td_error = td_error.mean()
         self.opt_actor.zero_grad()
         td_error.backward()
@@ -56,7 +58,7 @@ class QLearning(nn.Module):
         return td_error
 
     def update_trace(self, actions):
-        trace = getattr(traces, self.args.trace)(self.args, actions, self.trace)
+        return getattr(traces, self.args.trace)(self.args, actions, self.trace)
 
     def reset_trace(self):
             return torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
