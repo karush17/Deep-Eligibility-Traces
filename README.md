@@ -24,9 +24,12 @@ Following algorithms are available in the current version-
 
 ### PyTorch
 
-|Algorithm|Link|Implementation|Status|
+|Trace|Baseline Algorithms|Link|Implementation|Status|
 |:-------:|:--:|:------------:|:---:|
-|TD-lambda|[Sutton & Barto, Chapter 12](http://incompleteideas.net/book/RLbook2020.pdf)|[`TDlamb.py`](Pytorch/TDlamb.py)|Requires tuning|
+|TD-lambda|TD(1)|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`TDlamb.py`](Pytorch/TDlamb.py)|Requires tuning|
+|Replacing Trace|<ul><li>- [x] Sarsa</li><li>- [x] Q-learning</li><li>- [x] Expected Sarsa</li><li>- [x] Double Sarsa</li><li>- [x] Double Q-learning</li><li>- [x] Double Expected Sarsa</li></ul>|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`traces.py`](traces/traces.py)|:heavy_check_mark:|
+|Accumulating Trace|<ul><li>- [x] Sarsa</li><li>- [x] Q-learning</li><li>- [x] Expected Sarsa</li><li>- [x] Double Sarsa</li><li>- [x] Double Q-learning</li><li>- [x] Double Expected Sarsa</li></ul>|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`traces.py`](traces/traces.py)|:heavy_check_mark:|
+|Dutch Trace|<ul><li>- [x] Sarsa</li><li>- [x] Q-learning</li><li>- [x] Expected Sarsa</li><li>- [x] Double Sarsa</li><li>- [x] Double Q-learning</li><li>- [x] Double Expected Sarsa</li></ul>|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[``traces.py`](traces/traces.py)|:heavy_check_mark:|
 
 <!-- ### Tensorflow 2.0
 |Algorithm|Link|Implementation|
