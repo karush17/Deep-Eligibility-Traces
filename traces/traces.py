@@ -13,15 +13,9 @@ def accumulating(args, actions, trace):
     return trace
 
 def dutch(args, actions, trace):
-    trace = trace.scatter_(1, actions.unsqueeze(1), 1-args.alpha, reduce='multiply')
+    trace = trace.scatter_(1, actions.unsqueeze(1), 1-args.lr, reduce='multiply')
     trace = trace.scatter_(1, actions.unsqueeze(1), 1, reduce='add')
     return trace
-
-
-
-
-
-
 
 
 
