@@ -67,7 +67,8 @@ class DoubleExpectedSARSA(nn.Module):
         # create mask to make best actions zero in the original tensor
         mask = torch.ones_like(q_vals).scatter_(1, idx.unsqueeze(1), 0)
         # get sub-optimal actions by applying mask
-        sub_acts = q_vals[mask.bool()].unsqueeze(1)
+        sub_acts = q_vals[mask.bool()].view((self.args.batch_size, self.num_actions-1))
+        # sub_acts = q_vals[mask.bool()].unsqueeze(1)
         return (1-epsilon)*best_acts + (epsilon/(self.num_actions-1))*torch.sum(sub_acts, dim=1)
 
     def update_target(self, step_count):

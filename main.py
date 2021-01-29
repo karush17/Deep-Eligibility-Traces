@@ -40,18 +40,18 @@ def build_parser():
                         help='random seed (default: 123456)')
     parser.add_argument('--batch_size', type=int, default=32, metavar='N',
                         help='batch size (default: 32)')
-    parser.add_argument('--num_steps', type=float, default=10001, metavar='N',
+    parser.add_argument('--num_steps', type=float, default=30001, metavar='N',
                         help='maximum number of steps (default: 100000)')
     parser.add_argument('--log_interval', type=int, default=500, metavar='N',
                         help='save model and results every xth step (default: 10000)')
     parser.add_argument('--epsilon_start', type=float, default=1,
                         help='Epsilon start for greedy exploration (default: 1)')
-    parser.add_argument('--epsilon_final', type=float, default=0.01,
+    parser.add_argument('--epsilon_final', type=float, default=0.05,
                         help='Epsilon final for greedy exploration (default: 0.01)')
     parser.add_argument('--epsilon_decay', type=float, default=500,
                         help='Epsilon decay for greedy exploration (default: 500)')
     parser.add_argument('--window_size', type=int, default=10,
-                        help='Window length for averaging returns in plots (default: 50)')
+                        help='Window length for averaging returns in plots (default: 10)')
 
     return parser
 
