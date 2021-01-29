@@ -1,7 +1,7 @@
 import numpy as np
 
 class OneStateGaussianMDP:
-    def __init__(self):
+    def __init__(self, num_states):
         # initialize MDP
         self.end           = False
         self.current_state = 1
@@ -11,7 +11,7 @@ class OneStateGaussianMDP:
 
     def reset(self):
         # reset MDP
-        self.count_step = 0
+        self.step_count = 0
         self.end = False
         self.current_state = 1
         state = np.zeros(self.num_states)

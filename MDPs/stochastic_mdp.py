@@ -1,7 +1,7 @@
 import numpy as np
 
 class StochasticMDP:
-    def __init__(self):
+    def __init__(self, num_states):
         self.end           = False
         self.current_state = 2
         self.num_actions   = 2

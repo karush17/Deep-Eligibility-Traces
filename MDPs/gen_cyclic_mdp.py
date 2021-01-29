@@ -1,7 +1,7 @@
 import numpy as np
 
 class GeneralizedCyclicMDP:
-    def __init__(self, num_states):
+    def __init__(self, num_states=3):
         # initialize MDP
         self.end           = False
         self.current_state = 1
@@ -11,7 +11,7 @@ class GeneralizedCyclicMDP:
 
     def reset(self):
         # reset MDP
-        self.count_step = 0
+        self.step_count = 0
         self.end = False
         self.current_state = 1
         state = np.zeros(self.num_states)
@@ -35,7 +35,7 @@ class GeneralizedCyclicMDP:
             self.end = True
 
         # check step counter
-        if self.step_count == 1000:
+        if self.step_count >= 1000:
             self.end = True
 
         state = np.zeros(self.num_states)

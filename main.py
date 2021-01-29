@@ -46,12 +46,14 @@ def build_parser():
                         help='save model and results every xth step (default: 10000)')
     parser.add_argument('--epsilon_start', type=float, default=1,
                         help='Epsilon start for greedy exploration (default: 1)')
-    parser.add_argument('--epsilon_final', type=float, default=0.05,
+    parser.add_argument('--epsilon_final', type=float, default=0.01,
                         help='Epsilon final for greedy exploration (default: 0.01)')
     parser.add_argument('--epsilon_decay', type=float, default=500,
                         help='Epsilon decay for greedy exploration (default: 500)')
     parser.add_argument('--window_size', type=int, default=10,
                         help='Window length for averaging returns in plots (default: 10)')
+    parser.add_argument('--num_states', type=int, default=3,
+                        help='State space size for generalized MDPs (default: 3)')
 
     return parser
 
@@ -116,11 +118,11 @@ def main():
     log_dict['td_error'] = []
     log_dict['ep_count'] = []
 
-    env_list = ['CyclicMDP', 'OneStateGaussianMDP', 'OneStateMDP']
+    env_list = ['CyclicMDP', 'OneStateGaussianMDP', 'OneStateMDP', 'GeneralizedCyclicMDP']
 
     print('\tCreating environment ', args.env)
     if args.env in env_list:
-        env = getattr(MDPs, args.env)()
+        env = getattr(MDPs, args.env)(args.num_states)
         num_actions = env.num_actions
         state_dims = env.num_states
     else:
