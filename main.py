@@ -22,13 +22,10 @@ def build_parser():
     parser = argparse.ArgumentParser(description='Deep Eligibility Traces Args')
     parser.add_argument('--configs', type=str, default='configs/configs.yaml',
                      nargs='+', required=True)
-    parser.add_argument('--log_dir', , type=str, default="log/",
+    parser.add_argument('--log_dir', type=str, default="log/",
                         help='Directory for storing logs (default: log/)', required=True)
     args, remaining = parser.parse_known_args()
-    configs = yaml.safe_load((pathlib.Path(__file__).parent / 'configs.yaml').read_text())
-    config_ = {}
-    for name in args.configs:
-        config_.update(configs[name])
+    config_ = yaml.safe_load((pathlib.Path(__file__).parent / 'configs/configs.yaml').read_text())
     parser = argparse.ArgumentParser()
     for key, value in config_.items():
         arg_type = args_type(value)

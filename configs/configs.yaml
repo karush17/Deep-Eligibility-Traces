@@ -1,8 +1,10 @@
 
+configs: 'configs/configs.yaml'
 alg: 'QLearning'
 env: 'CyclicMDP'
 trace: 'dutch'
 lib: 'torch'
+log_dir: 'log/'
 eval: True
 gamma: 0.99
 lamb: 0.5
@@ -12,7 +14,7 @@ batch_size: 32
 num_steps: 30000
 log_interval: 500
 epsilon_start: 1
-epsilo_final: 0.001
+epsilon_final: 0.001
 epsilon_decay: 500
 window_size: 10
 num_states: 3
