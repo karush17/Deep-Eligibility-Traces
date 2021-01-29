@@ -42,9 +42,10 @@ Following is the list of custom toy environments-
 
 |Environment Name|Link|Implementation|
 |:--------------:|:--:|:------------:|
-|Cyclic MDP|[ESAC](https://arxiv.org/pdf/2007.13690.pdf)|[link](MDPs/cyclic_mdp.py)|
-|One-state MDP|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[link](MDPs/one_state_mdp.py)|
-|One-state Gaussian MDP|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[link](MDPs/one_state_gaussian_mdp.py)|
+|CyclicMDP|[ESAC](https://arxiv.org/pdf/2007.13690.pdf)|[link](MDPs/cyclic_mdp.py)|
+|OneStateMDP|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[link](MDPs/one_state_mdp.py)|
+|OneStateGaussianMDP|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[link](MDPs/one_state_gaussian_mdp.py)|
+|GeneralizedCyclicMDP|motivated by [ESAC](https://arxiv.org/pdf/2007.13690.pdf)|[link](MDPs/gen_cyclic_mdp.py)|
 
 ## Usage
 
