@@ -51,6 +51,7 @@ class DoubleExpectedSARSA(nn.Module):
                 self.trace = self.reset_trace()
             self.trace  = self.update_trace(actions)
             td_error *= self.trace.gather(1, actions.unsqueeze(1)).squeeze(1)
+            self.trace *= self.args.gamma*self.args.lamb
         td_error = td_error.mean()
         self.opt_actor.zero_grad()
         td_error.backward()
