@@ -2,6 +2,7 @@ virtualenv
 argparse==1.1
 gym==0.15.4
 numpy
-torch==1.4.0
+torch==1.7.0
 tensorflow==2.4.0
-
+ruamel.yaml
+pathlib
