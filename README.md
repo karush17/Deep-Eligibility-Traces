@@ -51,18 +51,20 @@ Following is the list of custom toy environments-
 
 To run an implementation, use the following command- 
 ```
-python main.py --alg <ALGORITHM> --env <ENV> --lib <LIBRARY> --trace <TRACE> --lamb <LAMBDA> --num_steps <STEPS>
+python main.py --configs configs/configs.yaml --log_dir log/ --env <ENVIRONMENT>
 ```
 
-For example, to run Q-Learning on the CartPole-v0 environment using PyTorch library with replacing trace and lambda=0.5, use the following-
+For example, to run Q-Learning on the CyclicMDP environment using PyTorch library, use the following-
 ```
-python main.py --alg QLearning --env CartPole-v0 --lib torch --trace replacing --lamb 0.5 --num_steps 10000
+python main.py --configs configs/configs.yaml --log_dir log/ --env CyclicMDP
+```
+This will train the agent with default arguments listed in [`configs.yaml`](configs/configs.yaml) file. 
+
+Following is an example to enter custom arguments for Q-Learning on the CartPole-v0 environment using PyTorch library with replacing trace and lambda=0.5-
+```
+python main.py --configs configs/configs.yaml --log_dir log/ --alg QLearning --env CartPole-v0 --lib torch --trace replacing --lamb 0.5 --num_steps 10000
 ``` 
 
-To view the full list of arguments run the following-
-```
-python main.py --help
-```
 ## Citation
 If you find these implementations helpful then please cite the following-
 ```
