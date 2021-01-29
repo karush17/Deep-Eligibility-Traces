@@ -1,5 +1,8 @@
 # Deep Eligibility Traces
 
+<!-- benchmarking-
+for each env: rewards (baselines+3 traces) x6 algos, variation lambda (3 traces) x4 values [0, 0.5, 0.75, 1] x6 algos -->
+
 ## Introduction
 This repository consists of implementations of Eligiblity Traces and corresponding algorithms in the deep learning setting. Algorithms are implemented in [`PyTorch`](Pytorch/) and [`Tensorflow 2.0`](Tensorflow/) on a range of problems. Custom toy problems are provided in the [`MDPs`](MDPs/) folder.
 
