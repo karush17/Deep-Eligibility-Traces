@@ -46,6 +46,8 @@ Following is the list of custom toy environments-
 |OneStateMDP|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[link](MDPs/one_state_mdp.py)|
 |OneStateGaussianMDP|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[link](MDPs/one_state_gaussian_mdp.py)|
 |GeneralizedCyclicMDP|motivated by [ESAC](https://arxiv.org/pdf/2007.13690.pdf)|[link](MDPs/gen_cyclic_mdp.py)|
+|StochasticMDP|[hDQN](https://arxiv.org/pdf/1604.06057.pdf)|[link](MDPs/stochastic_mdp.py)|
+|MultiChainMDP|[ET(λ)](https://arxiv.org/pdf/2007.01839.pdf)|[link](MDPs/multi_chain_mdp.py)|
 
 ## Usage
 

@@ -60,9 +60,5 @@ class MultiChainMDP:
         if self.step_count >= 1000:
             self.end = True
 
-        print(state.shape)
-        print(self.int_state.shape)
-        print(self.current_chain.shape)
-        print(self.current_state)
         return state, reward, self.end, {}
 
