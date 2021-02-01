@@ -133,7 +133,7 @@ def main():
     log_dict['td_error'] = []
     log_dict['ep_count'] = []
 
-    env_list = ['CyclicMDP', 'OneStateGaussianMDP', 'OneStateMDP', 'GeneralizedCyclicMDP']
+    env_list = ['CyclicMDP', 'OneStateGaussianMDP', 'OneStateMDP', 'GeneralizedCyclicMDP', 'StochasticMDP', 'MultiChainMDP']
 
     print('\tCreating environment ', args.env)
     if args.env in env_list:

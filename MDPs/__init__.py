@@ -3,3 +3,5 @@ from MDPs.one_state_mdp import *
 from MDPs.one_state_gaussian_mdp import *
 from MDPs.stochastic_mdp import *
 from MDPs.gen_cyclic_mdp import *
+from MDPs.stochastic_mdp import *
+from MDPs.multi_chain_mdp import *

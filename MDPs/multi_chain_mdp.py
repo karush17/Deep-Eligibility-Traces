@@ -44,14 +44,15 @@ class MultiChainMDP:
                 self.end = True
             # move along the chain
             else:
-                self.current_state += 1
                 self.int_state = np.zeros(self.num_int_states)
                 self.int_state[self.current_state-1] = 1 # next node of the chain
                 state = np.concatenate((self.int_state, self.current_chain), axis=0)
                 reward = 1
+                self.current_state += 1
 
         # negative reward for backward action
         else:
+            state = np.concatenate((self.int_state, self.current_chain), axis=0)
             reward = -1
             self.end = True
 
@@ -59,5 +60,9 @@ class MultiChainMDP:
         if self.step_count >= 1000:
             self.end = True
 
+        print(state.shape)
+        print(self.int_state.shape)
+        print(self.current_chain.shape)
+        print(self.current_state)
         return state, reward, self.end, {}
 
