@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 class StochasticMDP:
     def __init__(self, num_states):
