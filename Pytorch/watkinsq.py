@@ -9,9 +9,9 @@ from utils.utils import *
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-class TDLambda(nn.Module):
+class WatkinsQ(nn.Module):
     def __init__(self, args, state_dims, num_actions):
-        super(TDLambda, self).__init__()
+        super(WatkinsQ, self).__init__()
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
@@ -41,21 +41,18 @@ class TDLambda(nn.Module):
         dones = to_torch(dones)
         vals = self.actor(states)#[self.actor.get_actions(states)]
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
-        next_vals = self.actor(next_states)
-        new_next_vals = torch.zeros([self.args.batch_size,1], dtype=torch.float32).to(DEVICE)
-        for i in range(len(next_vals)):
-            new_next_vals[i] = to_torch(np.random.choice(to_np(self.args, next_vals[i,:]), p=to_np(self.args, F.softmax(next_vals[i,:]))))
-        # print(vals)
-        # print(next_vals)
-        # next_vals = np.random.choice(next_vals, 1)[0]
-        target = rewards + self.args.gamma*new_next_vals*(1 - dones)
+        next_vals = self.actor(next_states).max(1)[0]
+        # new_next_vals = torch.zeros([self.args.batch_size,1], dtype=torch.float32).to(DEVICE)
+        # for i in range(len(next_vals)):
+        #     new_next_vals[i] = to_torch(np.random.choice(to_np(self.args, next_vals[i,:]), p=to_np(self.args, F.softmax(next_vals[i,:]))))
+        target = rewards + self.args.gamma*next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
         self.trace = self.reset_trace(step_count) 
-        eval_gradients = ag.grad(vals.mean(), self.actor.parameters())
+        eval_gradients = ag.grad(td_error, self.actor.parameters())
         for idx, p in enumerate(self.actor.parameters()):
             self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
-            p.grad = -td_error*self.trace[idx]
+            p.grad = td_error*self.trace[idx]
         self.opt_actor.step()
         return td_error
 
