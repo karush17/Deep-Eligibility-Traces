@@ -31,44 +31,6 @@ def build_parser():
         arg_type = args_type(value)
         parser.add_argument(f'--{key}', type=arg_type, default=arg_type(value))
 
-    # parser = argparse.ArgumentParser(description='Deep Eligibility Traces Args')
-    # parser.add_argument('--alg', type=str, default="TDLambda",
-    #                     help='Trace algorithm to be used (default: TDLambda)')
-    # parser.add_argument('--log_dir', type=str, default="log/",
-    #                     help='Directory for storing logs (default: log/)')
-    # parser.add_argument('--env', type=str, default="CyclicMDP",
-    #                     help='Toy environment (default: CyclicMDP)')
-    # parser.add_argument('--trace', type=str, default="dutch",
-    #                     help='Trace update (default: dutch)')
-    # parser.add_argument('--lib', type=str, default="torch",
-    #                     help='Deep Learning Library to use (default: torch)')
-    # parser.add_argument('--eval', type=bool, default=True,
-    #                     help='Evaluates a policy a policy every 10 episode (default: True)')
-    # parser.add_argument('--gamma', type=float, default=0.99, metavar='G',
-    #                     help='discount factor for reward (default: 0.99)')
-    # parser.add_argument('--lamb', type=float, default=0.5, metavar='G',
-    #                     help='lambda value for trace updates (default: 0.95)')
-    # parser.add_argument('--lr', type=float, default=0.001, metavar='G',
-    #                     help='learning rate of agent (default: 0.01)')
-    # parser.add_argument('--seed', type=int, default=123456, metavar='N',
-    #                     help='random seed (default: 123456)')
-    # parser.add_argument('--batch_size', type=int, default=32, metavar='N',
-    #                     help='batch size (default: 32)')
-    # parser.add_argument('--num_steps', type=float, default=30001, metavar='N',
-    #                     help='maximum number of steps (default: 100000)')
-    # parser.add_argument('--log_interval', type=int, default=500, metavar='N',
-    #                     help='save model and results every xth step (default: 10000)')
-    # parser.add_argument('--epsilon_start', type=float, default=1,
-    #                     help='Epsilon start for greedy exploration (default: 1)')
-    # parser.add_argument('--epsilon_final', type=float, default=0.001,
-    #                     help='Epsilon final for greedy exploration (default: 0.01)')
-    # parser.add_argument('--epsilon_decay', type=float, default=500,
-    #                     help='Epsilon decay for greedy exploration (default: 500)')
-    # parser.add_argument('--window_size', type=int, default=10,
-    #                     help='Window length for averaging returns in plots (default: 10)')
-    # parser.add_argument('--num_states', type=int, default=3,
-    #                     help='State space size for generalized MDPs (default: 3)')
-
     return parser
 
 
