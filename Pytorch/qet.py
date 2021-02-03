@@ -17,7 +17,7 @@ class ExpectedTrace(nn.Module):
         self.state_dims = state_dims
         self.num_actions = num_actions
         self.actor = ActorNetwork(args, state_dims, num_actions).to(DEVICE)
-        self.exp_trace_param = torch.zeros((self.num_actions, self.num_actions, self.state_dims)).to(DEVICE)
+        self.exp_trace_param = torch.rand((self.num_actions, self.num_actions, self.state_dims)).to(DEVICE)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
         self.opt_trace = torch.optim.Adam(self.exp_trace_param, lr=args.lr)
         self.trace = {}
@@ -45,7 +45,10 @@ class ExpectedTrace(nn.Module):
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states).max(1)[0]
         # expected trace update- The paper does not backpropagate rtace gradients into feature representations. I have slightly modified this for a better learning signal.
+        print(self.exp_trace_param.shape, torch.transpose(states,0,1).shape)
         self.exp_trace = self.exp_trace_param*torch.transpose(states,0,1)
+        print(self.exp_trace.shape)
+        print(self.trace[-1].shape)
         trace_loss = (self.trace[-1] - self.exp_trace).pow(2).mean() # learn expectation of trace from last layer
         self.opt_trace.zero_grad()
         trace_loss.backward()
