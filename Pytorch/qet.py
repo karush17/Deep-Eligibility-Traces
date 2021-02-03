@@ -13,19 +13,19 @@ class ExpectedTrace(nn.Module):
     def __init__(self, args, state_dims, num_actions):
         super(ExpectedTrace, self).__init__()
         self.args = args
-        self.eta = 0.8
+        self.eta = 0.95
         self.state_dims = state_dims
         self.num_actions = num_actions
         self.actor = ActorNetwork(args, state_dims, num_actions).to(DEVICE)
-        self.exp_trace_param = torch.rand((self.num_actions, self.num_actions, self.state_dims)).to(DEVICE)
+        self.exp_trace_param = torch.rand((self.num_actions, self.state_dims), requires_grad=True).to(DEVICE)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
-        self.opt_trace = torch.optim.Adam(self.exp_trace_param, lr=args.lr)
+        # self.opt_trace = torch.optim.Adam(self.exp_trace_param, lr=args.lr)
         self.trace = {}
         for idx, p in enumerate(self.actor.parameters()):
             self.trace[idx] = torch.zeros(p.data.shape).to(DEVICE)
 
         print(self.actor)
-        print(self.opt_value)
+        print(self.opt_actor)
     
     def forward(self, states):
         return self.actor(states)
@@ -44,16 +44,14 @@ class ExpectedTrace(nn.Module):
         vals = self.actor(states)
         vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
         next_vals = self.actor(next_states).max(1)[0]
-        # expected trace update- The paper does not backpropagate rtace gradients into feature representations. I have slightly modified this for a better learning signal.
-        print(self.exp_trace_param.shape, torch.transpose(states,0,1).shape)
-        self.exp_trace = self.exp_trace_param*torch.transpose(states,0,1)
-        print(self.exp_trace.shape)
-        print(self.trace[-1].shape)
-        trace_loss = (self.trace[-1] - self.exp_trace).pow(2).mean() # learn expectation of trace from last layer
-        self.opt_trace.zero_grad()
-        trace_loss.backward()
-        self.opt_trace.step()
-        self.trace[-1] = (1-self.eta)*self.exp_trace + self.eta*self.trace[-1]
+        # expected trace update- The paper does not backpropagate trace gradients into feature representations. We follow this convention but reduce one dimension in the linear approximation since we take the expectation over batch.
+        ind_trace = list(self.trace.keys())[-1]
+        self.exp_trace = torch.matmul(self.exp_trace_param, states.transpose(0,1))
+        trace_loss = (self.exp_trace.mean(1) - self.trace[ind_trace]).pow(2).mean() # learn expectation from last layer
+        trace_grad = ag.grad(trace_loss, self.exp_trace_param)[0]
+        self.exp_trace_param += self.args.lr*trace_grad
+        self.trace[ind_trace] = (1-self.eta)*self.exp_trace.mean(1) + self.eta*self.trace[ind_trace]
+        # TD update
         target = rewards + self.args.gamma*next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2).mean()
         self.opt_actor.zero_grad()
