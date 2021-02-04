@@ -5,8 +5,10 @@ from utils.utils import *
 
 
 class ActorNetwork(tf.Module):
-    def __init__(self, num_actions):
+    def __init__(self, args, num_inputs, num_actions):
         super(ActorNetwork, self).__init__()
+        self.num_actions = num_actions
+        self.args = args
         self.l1 = layers.Dense(128, activation='ReLU')
         self.l2 = layers.Dense(128, activation='ReLU')
         self.logits = layers.Dense(num_actions)
@@ -18,9 +20,27 @@ class ActorNetwork(tf.Module):
         x = self.logits(x)
         return x
     
-    def get_action(self, obs):
-        x = self.__call__(obs)
-        return np.squeeze(x, axis=-1)
+    def get_actions(self, steps, states):
+        # select action during updates
+        if states.shape[0]==self.args.batch_size:
+            if random.random() > epsilon_by_step(self.args, steps):
+                x = to_tensor(states)
+                x = self.forward(x)
+                x = tf.cast(tf.argmax(x, dim=1), tf.int64)
+                return x
+            else:
+                return tf.cast(to_tensor(np.random.randint(low=0, high=self.num_actions, size=self.args.batch_size)), tf.int64)#random.randrange(self.num_actions)
+            
+        else:
+            # select action during policy execution
+            if random.random() > epsilon_by_step(self.args, steps):
+                x = to_tensor(states)
+                x = self.forward(x)
+                x = to_np(self.args, x)
+                x = np.squeeze(np.argmax(x, axis=0), axis=-1) 
+                return x
+            else:
+                return random.randrange(self.num_actions)
 
 
 class ValueNetwork(tf.Module):

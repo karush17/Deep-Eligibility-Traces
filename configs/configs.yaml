@@ -2,7 +2,7 @@
 configs: 'configs/configs.yaml'
 alg: 'QLearning'
 env: 'CyclicMDP'
-trace: 'dutch'
+trace: 'none'
 lib: 'torch'
 log_dir: 'log/'
 eval: True
