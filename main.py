@@ -53,7 +53,7 @@ def train(args, env, policy, log_dict):
 
         if len(replay_buffer) > args.batch_size:
             loss = policy.update(replay_buffer, steps, ep_step_count)
-        ep_loss += loss.item()
+        ep_loss += loss#.item()
 
         replay_buffer.push(state, action, reward, next_state, done)
         state = next_state

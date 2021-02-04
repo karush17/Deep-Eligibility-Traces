@@ -37,8 +37,8 @@ class QLearning(tf.Module):
         with tf.GradientTape() as tape:
             vals = self.actor(states)
             vals = tf.gather(params=vals, indices=tf.expand_dims(actions, axis=1), axis=1)
-            vals = tf.squeeze(1)
-            next_vals = max(self.actor(next_states), axis=1)[0]
+            vals = tf.squeeze(vals, axis=1)
+            next_vals = tf.reduce_max(self.actor(next_states), axis=1)[0]
             target = tf.stop_gradient(rewards + self.args.gamma*next_vals*(1 - dones))
             td_error = (target - vals)**2
             # trace update
@@ -51,8 +51,8 @@ class QLearning(tf.Module):
                 self.trace *= self.args.gamma*self.args.lamb
             # td update
             grads = tape.gradient(td_error, self.actor.trainable_variables)
-            self.opt_actor.optimizer.apply_gradients(zip(grads, self.actor.trainable_variables))
-        return td_error
+            self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
+        return td_error.eval()
 
     def update_trace(self, actions):
         return getattr(traces, self.args.trace)(self.args, actions, self.trace)

@@ -37,7 +37,7 @@ class ActorNetwork(tf.Module):
                 x = to_tensor(states)
                 x = self.__call__(x)
                 x = to_np(self.args, x)
-                x = np.squeeze(np.argmax(x, axis=0), axis=-1) 
+                x = np.argmax(x, axis=1)[0]
                 return x
             else:
                 return random.randrange(self.num_actions)
