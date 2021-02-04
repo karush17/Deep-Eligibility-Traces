@@ -51,7 +51,7 @@ class QLearning(tf.Module):
             # td update
             grads = tape.gradient(td_error, self.actor.trainable_variables)
             self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
-        return td_error.numpy()[0]
+        return to_np(self.args, td_error)[0]
 
     def update_trace(self, actions):
         return getattr(traces, self.args.trace)(self.args, actions, self.trace)

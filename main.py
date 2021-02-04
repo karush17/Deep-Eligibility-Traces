@@ -65,8 +65,8 @@ def train(args, env, policy, log_dict):
             log_dict['rewards'].append(ep_reward)
             log_dict['td_error'].append(ep_loss)
             if len(log_dict['rewards']) > args.window_size:
-                log_dict['average_rewards'].append(np.mean(log_dict['rewards'][-args.window_size]))
-                log_dict['average_error'].append(np.mean(log_dict['td_error'][-args.window_size]))
+                log_dict['average_rewards'].append(np.mean(log_dict['rewards'][-args.window_size:]))
+                log_dict['average_error'].append(np.mean(log_dict['td_error'][-args.window_size:]))
             log_dict['ep_count'].append(steps)
             ep_loss = 0
             ep_reward = 0
