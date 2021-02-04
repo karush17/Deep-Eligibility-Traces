@@ -41,7 +41,9 @@ class QLearning(nn.Module):
         next_states = to_torch(next_states)
         dones = to_torch(dones)
         vals = self.actor(states)
-        vals = vals.gather(1, actions.unsqueeze(1)).squeeze(1)
+        print(vals.shape, actions.shape)
+        vals = vals.gather(1, actions.unsqueeze(1))#.squeeze(1)
+        print(vals.shape, vals.squeeze(1).shape)
         next_vals = self.actor(next_states).max(1)[0]
         target = rewards + self.args.gamma*next_vals*(1 - dones)
         td_error = (target.detach() - vals).pow(2)
