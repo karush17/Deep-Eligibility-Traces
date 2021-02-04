@@ -60,7 +60,7 @@ class DoubleQLearning(nn.Module):
         td_error.backward()
         self.opt_actor.step()
         self.update_target(step_count)
-        return td_error
+        return td_error.item()
 
     def update_target(self, step_count):
         if step_count==1:

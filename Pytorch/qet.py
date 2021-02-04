@@ -61,7 +61,7 @@ class ExpectedTrace(nn.Module):
             self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
             p.grad = td_error*self.trace[idx]
         self.opt_actor.step()
-        return td_error
+        return td_error.item()
 
     def reset_trace(self, step_count):
         if step_count==1:

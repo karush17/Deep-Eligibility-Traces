@@ -57,7 +57,7 @@ class DoubleExpectedSARSA(nn.Module):
         td_error.backward()
         self.opt_actor.step()
         self.update_target(step_count)
-        return td_error
+        return td_error.item()
 
     def get_expectation(self, q_vals, epsilon):
         # get indices of best actions

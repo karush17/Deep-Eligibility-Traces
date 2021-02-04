@@ -57,7 +57,7 @@ class ExpectedSARSA(nn.Module):
         self.opt_actor.zero_grad()
         td_error.backward()
         self.opt_actor.step()
-        return td_error
+        return td_error.item()
 
     def get_expectation(self, q_vals, epsilon):
         # get indices of best actions
