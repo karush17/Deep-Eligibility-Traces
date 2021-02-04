@@ -9,11 +9,11 @@ class ActorNetwork(tf.Module):
         super(ActorNetwork, self).__init__()
         self.num_actions = num_actions
         self.args = args
-        self.l1 = layers.Dense(128, activation='ReLU')
-        self.l2 = layers.Dense(128, activation='ReLU')
+        self.l1 = layers.Dense(128, activation='relu')
+        self.l2 = layers.Dense(128, activation='relu')
         self.logits = layers.Dense(num_actions)
 
-    def call(self, states):
+    def __call__(self, states):
         x = to_tensor(states)
         x = self.l1(x)
         x = self.l2(x)
@@ -25,7 +25,7 @@ class ActorNetwork(tf.Module):
         if states.shape[0]==self.args.batch_size:
             if random.random() > epsilon_by_step(self.args, steps):
                 x = to_tensor(states)
-                x = self.forward(x)
+                x = self.__call__(x)
                 x = tf.cast(tf.argmax(x, dim=1), tf.int64)
                 return x
             else:
@@ -35,13 +35,12 @@ class ActorNetwork(tf.Module):
             # select action during policy execution
             if random.random() > epsilon_by_step(self.args, steps):
                 x = to_tensor(states)
-                x = self.forward(x)
+                x = self.__call__(x)
                 x = to_np(self.args, x)
                 x = np.squeeze(np.argmax(x, axis=0), axis=-1) 
                 return x
             else:
                 return random.randrange(self.num_actions)
-
 
 class ValueNetwork(tf.Module):
     def __init__(self, num_actions):

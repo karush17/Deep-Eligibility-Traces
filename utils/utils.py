@@ -34,7 +34,7 @@ def to_np(args, x):
     if args.lib=='torch':
     	return x.detach().cpu().numpy()
     else:
-        return tf.make_ndarray(tf.stop_gradient(x))
+        return tf.stop_gradient(x).numpy()
 
 def to_torch(x, **kwargs):
 	if torch.is_tensor(x):
@@ -46,7 +46,10 @@ def to_tensor(x):
     if tf.is_tensor(x):
         return x
     else:
-        return tf.convert_to_tensor(x, dtype=tf.float32)
+        x = tf.convert_to_tensor(x, dtype=tf.float32)
+        if len(tf.shape(x))==1:
+          x = tf.expand_dims(x, axis=0)
+        return x
 
 def dict_to_torch(d):
 	return {

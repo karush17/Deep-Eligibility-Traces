@@ -8,22 +8,19 @@ from utils.utils import *
 import traces
 
 
-
-class QLearning(nn.Module):
+class QLearning(tf.Module):
     def __init__(self, args, state_dims, num_actions):
         super(QLearning, self).__init__()
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
         self.actor = ActorNetwork(args, state_dims, num_actions)
-        self.value_net = ValueNetwork(args, state_dims, num_actions)
         self.opt_actor = optimizers.Adam(learning_rate=args.lr)
-        self.opt_value = optimizers.Adam(learning_rate=args.lr)
         self.trace = tf.zeros((self.args.batch_size, self.num_actions))
         print(self.actor)
-        print(self.opt_value)
+        print(self.opt_actor)
     
-    def forward(self, states):
+    def __call__(self, states):
         return self.actor(states)
     
     def get_actions(self, steps, states):
@@ -41,7 +38,7 @@ class QLearning(nn.Module):
             vals = self.actor(states)
             vals = tf.gather(params=vals, indices=tf.expand_dims(actions, axis=1), axis=1)
             vals = tf.squeeze(1)
-            next_vals = self.actor(next_states).max(1)[0]
+            next_vals = max(self.actor(next_states), axis=1)[0]
             target = tf.stop_gradient(rewards + self.args.gamma*next_vals*(1 - dones))
             td_error = (target - vals)**2
             # trace update
