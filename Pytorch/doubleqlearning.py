@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import torch.autograd as ag
 from networks.pytorch_networks import *
 from utils.utils import *
-import traces
+from traces import torch_traces
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -67,7 +67,7 @@ class DoubleQLearning(nn.Module):
             self.target_actor.load_state_dict(self.actor.state_dict())
 
     def update_trace(self, actions):
-        return getattr(traces, self.args.trace)(self.args, actions, self.trace)
+        return getattr(torch_traces, self.args.trace)(self.args, actions, self.trace)
 
     def reset_trace(self):
             return torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)

@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import torch.autograd as ag
 from networks.pytorch_networks import *
 from utils.utils import *
-import traces
+from traces import torch_traces
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -71,7 +71,7 @@ class ExpectedSARSA(nn.Module):
         return (1-epsilon)*best_acts + (epsilon/(self.num_actions-1))*torch.sum(sub_acts, dim=1)
 
     def update_trace(self, actions):
-        return getattr(traces, self.args.trace)(self.args, actions, self.trace)
+        return getattr(torch_traces, self.args.trace)(self.args, actions, self.trace)
 
     def reset_trace(self):
             return torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)

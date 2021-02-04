@@ -15,7 +15,6 @@ import tensorflow as tf
 from datetime import datetime
 
 from utils.utils import *
-from traces.traces import *
 
 start_time = time.time()
 
