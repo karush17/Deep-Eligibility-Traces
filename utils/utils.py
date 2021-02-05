@@ -34,7 +34,10 @@ def to_np(args, x):
     if args.lib=='torch':
     	return x.detach().cpu().numpy()
     else:
-        return tf.stop_gradient(x).numpy()
+      if args.eager:
+          return tf.stop_gradient(x).numpy()
+      else:
+          return tf.stop_gradient(x).eval(session=tf.compat.v1.Session())
 
 def to_torch(x, **kwargs):
 	if torch.is_tensor(x):

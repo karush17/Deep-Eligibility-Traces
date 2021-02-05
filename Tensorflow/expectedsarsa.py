@@ -59,13 +59,14 @@ class ExpectedSARSA(tf.Module):
     def get_expectation(self, q_vals, epsilon):
         # get indices of best actions
         idx = tf.argmax(q_vals, axis=1)
+        idx = tf.transpose(tf.expand_dims(idx, axis=0))
         # gather best actions
-        best_acts = tf.gather_nd(params=q_vals, indices=tf.transpose(idx), batch_dims=1)
+        best_acts = tf.gather_nd(params=q_vals, indices=idx, batch_dims=1)
         # create mask to make best actions zero in the original tensor
-        mask = tf.scatter_nd(idx, 0, tf.ones_like(q_vals))
-        mask = tf.cast(mask, tf.bool)
+        mask = tf.one_hot(tf.squeeze(idx,1), self.num_actions)
+        # mask = tf.tensor_scatter_nd_update(tf.ones_like(q_vals), idx, tf.zeros(tf.shape(idx)))
         # get sub-optimal actions by applying mask
-        sub_acts = tf.reshape(q_vals[mask], (self.args.batch_size, self.num_actions-1))
+        sub_acts = q_vals*mask
         return (1-epsilon)*best_acts + (epsilon/(self.num_actions-1))*tf.reduce_sum(sub_acts, axis=1)
 
 
