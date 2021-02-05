@@ -8,15 +8,16 @@ from utils.utils import *
 import traces
 
 
-class QLearning(tf.Module):
+class SARSA(nn.Module):
     def __init__(self, args, state_dims, num_actions):
-        super(QLearning, self).__init__()
+        super(SARSA, self).__init__()
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
         self.actor = ActorNetwork(args, state_dims, num_actions)
+        self.value_net = ValueNetwork(args, state_dims, num_actions)
         self.opt_actor = optimizers.Adam(learning_rate=self.args.lr)
-        self.trace = tf.zeros((self.args.batch_size, self.num_actions))
+        self.trace = torch.zeros((self.args.batch_size, self.num_actions))
         print(self.actor)
         print(self.opt_actor)
     
@@ -35,9 +36,11 @@ class QLearning(tf.Module):
         next_states = to_tensor(next_states)
         dones = to_tensor(dones)
         with tf.GradientTape() as tape:
-            vals = self.actor(states)
+            vals = self.actor(states)#[self.actor.get_actions(states)]
             vals = tf.gather_nd(params=vals, indices=tf.transpose(actions), batch_dims=1)
-            next_vals = tf.reduce_max(self.actor(next_states), axis=1)
+            next_vals = self.actor(next_states)
+            next_actions = tf.cast(self.actor.get_actions(steps, next_states), tf.int64)
+            next_vals = tf.gather_nd(params=next_vals, indices=tf.transpose(next_actions), batch_dims=1)
             target = tf.stop_gradient(rewards + self.args.gamma*next_vals*(1 - dones))
             td_error = (target - vals)**2
             # trace update
@@ -51,13 +54,14 @@ class QLearning(tf.Module):
             # td update
             grads = tape.gradient(td_error, self.actor.trainable_variables)
             self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
-        return to_np(self.args, td_error)[0]
+    return to_np(self.args, td_error)[0]
 
     def update_trace(self, actions):
-        return getattr(traces, self.args.trace)(self.args, actions, self.trace)
+        return getattr(torch_traces, self.args.trace)(self.args, actions, self.trace)
 
     def reset_trace(self):
-            return tf.zeros((self.args.batch_size, self.num_actions))
+            return torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
+
 
 
 
