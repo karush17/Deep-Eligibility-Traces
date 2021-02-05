@@ -16,14 +16,12 @@ class WatkinsQ(nn.Module):
         self.state_dims = state_dims
         self.num_actions = num_actions
         self.actor = ActorNetwork(args, state_dims, num_actions).to(DEVICE)
-        self.value_net = ValueNetwork(args, state_dims, num_actions).to(DEVICE)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
-        self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
         self.trace = {}
         for idx, p in enumerate(self.actor.parameters()):
             self.trace[idx] = torch.zeros(p.data.shape).to(DEVICE)
         print(self.actor)
-        print(self.opt_value)
+        print(self.opt_actor)
     
     def forward(self, states):
         return self.actor(states)

@@ -19,12 +19,10 @@ class DoubleQLearning(nn.Module):
         self.num_actions = num_actions
         self.actor = ActorNetwork(args, state_dims, num_actions).to(DEVICE)
         self.target_actor = ActorNetwork(args, state_dims, num_actions).to(DEVICE)
-        self.value_net = ValueNetwork(args, state_dims, num_actions).to(DEVICE)
         self.opt_actor = torch.optim.Adam(self.actor.parameters(), lr=args.lr)
-        self.opt_value = torch.optim.Adam(self.value_net.parameters(), lr=args.lr)
         self.trace = torch.zeros((self.args.batch_size, self.num_actions)).to(DEVICE)
         print(self.actor)
-        print(self.opt_value)
+        print(self.opt_actor)
     
     def forward(self, states):
         return self.actor(states)
