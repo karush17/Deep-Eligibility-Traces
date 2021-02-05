@@ -26,8 +26,8 @@ class ActorNetwork(tf.Module):
             if random.random() > epsilon_by_step(self.args, steps):
                 x = to_tensor(states)
                 x = self.__call__(x)
-                x = tf.cast(tf.argmax(x, dim=1), tf.int64)
-                return x
+                x = tf.cast(tf.argmax(x, axis=1), tf.int64)
+                return tf.expand_dims(x, axis=0)
             else:
                 return tf.cast(to_tensor(np.random.randint(low=0, high=self.num_actions, size=self.args.batch_size)), tf.int64)#random.randrange(self.num_actions)
             

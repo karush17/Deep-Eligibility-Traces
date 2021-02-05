@@ -8,14 +8,13 @@ from utils.utils import *
 import traces
 
 
-class SARSA(nn.Module):
+class SARSA(tf.Module):
     def __init__(self, args, state_dims, num_actions):
         super(SARSA, self).__init__()
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
         self.actor = ActorNetwork(args, state_dims, num_actions)
-        self.value_net = ValueNetwork(args, state_dims, num_actions)
         self.opt_actor = optimizers.Adam(learning_rate=self.args.lr)
         self.trace = torch.zeros((self.args.batch_size, self.num_actions))
         print(self.actor)
@@ -54,7 +53,7 @@ class SARSA(nn.Module):
             # td update
             grads = tape.gradient(td_error, self.actor.trainable_variables)
             self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
-    return to_np(self.args, td_error)[0]
+        return to_np(self.args, td_error)[0]
 
     def update_trace(self, actions):
         return getattr(torch_traces, self.args.trace)(self.args, actions, self.trace)
