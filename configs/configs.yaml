@@ -18,6 +18,6 @@ epsilon_final: 0.001
 epsilon_decay: 500
 window_size: 10
 num_states: 3
-
+eager: True
 
 

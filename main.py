@@ -118,7 +118,7 @@ def main():
     else:
         print('\tFramework set to Tensorflow 2.0')
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-        tf.config.run_functions_eagerly(True)
+        tf.config.run_functions_eagerly(args.eager)
         tf.random.set_seed(args.seed)
         policy = getattr(Tensorflow, args.alg)(args, state_dims, num_actions)
 
