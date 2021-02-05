@@ -26,6 +26,7 @@ class QLearning(tf.Module):
     def get_actions(self, steps, states):
         return self.actor.get_actions(steps, states)
     
+    @tf.function
     def update(self, replay_buffer, steps, step_count):
         batch_size = self.args.batch_size
         states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
@@ -56,6 +57,7 @@ class QLearning(tf.Module):
     def update_trace(self, actions):
         return getattr(traces, self.args.trace)(self.args, actions, self.trace)
 
+    @tf.function
     def reset_trace(self):
             return tf.zeros((self.args.batch_size, self.num_actions))
 

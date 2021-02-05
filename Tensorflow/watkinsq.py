@@ -19,12 +19,13 @@ class WatkinsQ(tf.Module):
         print(self.actor)
         print(self.opt_actor)
     
-    def forward(self, states):
+    def __call__(self, states):
         return self.actor(states)
     
     def get_actions(self, steps, states):
         return self.actor.get_actions(steps, states)
 
+    @tf.function
     def update(self, replay_buffer, steps, step_count):
         batch_size = self.args.batch_size
         states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
@@ -52,6 +53,7 @@ class WatkinsQ(tf.Module):
             self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
         return to_np(self.args, td_error)[0]
 
+    @tf.function
     def reset_trace(self, step_count, force_reset=False):
         if step_count==1 or force_reset:
             for idx, p in enumerate(self.actor.trainable_variables):
