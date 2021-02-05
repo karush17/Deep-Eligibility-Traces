@@ -8,9 +8,9 @@ from utils.utils import *
 import traces
 
 
-class SARSA(tf.Module):
+class ExpectedSARSA(tf.Module):
     def __init__(self, args, state_dims, num_actions):
-        super(SARSA, self).__init__()
+        super(ExpectedSARSA, self).__init__()
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
@@ -39,8 +39,7 @@ class SARSA(tf.Module):
             vals = self.actor(states)#[self.actor.get_actions(states)]
             vals = tf.gather_nd(params=vals, indices=tf.transpose(actions), batch_dims=1)
             next_vals = self.actor(next_states)
-            next_actions = tf.cast(self.actor.get_actions(steps, next_states), tf.int64)
-            next_vals = tf.gather_nd(params=next_vals, indices=tf.transpose(next_actions), batch_dims=1)
+            next_vals = self.get_expectation(next_vals, epsilon_by_step(self.args, steps))
             target = tf.stop_gradient(rewards + self.args.gamma*next_vals*(1 - dones))
             td_error = (target - vals)**2
             # trace update
@@ -55,6 +54,20 @@ class SARSA(tf.Module):
             grads = tape.gradient(td_error, self.actor.trainable_variables)
             self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
         return to_np(self.args, td_error)[0]
+
+    @tf.function
+    def get_expectation(self, q_vals, epsilon):
+        # get indices of best actions
+        idx = tf.argmax(q_vals, axis=1)
+        # gather best actions
+        best_acts = tf.gather_nd(params=q_vals, indices=tf.transpose(idx), batch_dims=1)
+        # create mask to make best actions zero in the original tensor
+        mask = tf.scatter_nd(idx, 0, tf.ones_like(q_vals))
+        mask = tf.cast(mask, tf.bool)
+        # get sub-optimal actions by applying mask
+        sub_acts = tf.reshape(q_vals[mask], (self.args.batch_size, self.num_actions-1))
+        return (1-epsilon)*best_acts + (epsilon/(self.num_actions-1))*tf.reduce_sum(sub_acts, axis=1)
+
 
     def update_trace(self, actions):
         return getattr(torch_traces, self.args.trace)(self.args, actions, self.trace)
