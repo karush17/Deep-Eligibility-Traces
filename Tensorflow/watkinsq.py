@@ -43,13 +43,15 @@ class WatkinsQ(tf.Module):
             self.trace = self.reset_trace(step_count) 
             grads = tape.gradient(td_error, self.actor.trainable_variables)
             for idx, p in enumerate(self.actor.trainable_variables):
+                if idx not in list(self.trace.keys()):
+                    self.trace = self.reset_trace(step_count, force_reset=True) 
                 self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + grads[idx]
                 grads[idx] = td_error*self.trace[idx]
             self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
         return to_np(self.args, td_error)[0]
 
-    def reset_trace(self, step_count):
-        if step_count==1:
+    def reset_trace(self, step_count, force_reset=False):
+        if step_count==1 or force_reset:
             for idx, p in enumerate(self.actor.trainable_variables):
                 self.trace[idx] = tf.zeros(p.get_shape())
         return self.trace
