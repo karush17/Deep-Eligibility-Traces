@@ -8,9 +8,9 @@ from utils.utils import *
 import traces
 
 
-class DoubleExpectedSARSA(tf.Module):
+class DoubleQLearning(tf.Module):
     def __init__(self, args, state_dims, num_actions):
-        super(DoubleExpectedSARSA, self).__init__()
+        super(DoubleQLearning, self).__init__()
         self.args = args
         self.state_dims = state_dims
         self.num_actions = num_actions
@@ -37,11 +37,12 @@ class DoubleExpectedSARSA(tf.Module):
         next_states = to_tensor(next_states)
         dones = to_tensor(dones)
         with tf.GradientTape() as tape:
-            vals = self.actor(states)#[self.actor.get_actions(states)]
+            vals = self.actor(states)
             vals = tf.gather_nd(params=vals, indices=tf.transpose(actions), batch_dims=1)
-            next_vals = self.target_actor(next_states)
-            next_vals = self.get_expectation(next_vals, epsilon_by_step(self.args, steps))
-            target = tf.stop_gradient(rewards + self.args.gamma*next_vals*(1 - dones))
+            next_vals = tf.expand_dims(tf.argmax(self.actor(next_states), axis=1),0)
+            next_q_vals = self.target_actor(next_states)
+            next_q_values = tf.gather_nd(params=next_q_vals, indices=tf.transpose(next_vals), batch_dims=1)
+            target = tf.stop_gradient(rewards + self.args.gamma*next_q_values*(1 - dones))
             td_error = (target - vals)**2
             # trace update
             if self.args.trace!='none':
@@ -58,20 +59,6 @@ class DoubleExpectedSARSA(tf.Module):
         return to_np(self.args, td_error)[0]
 
     @tf.function
-    def get_expectation(self, q_vals, epsilon):
-        # get indices of best actions
-        idx = tf.argmax(q_vals, axis=1)
-        idx = tf.transpose(tf.expand_dims(idx, axis=0))
-        # gather best actions
-        best_acts = tf.gather_nd(params=q_vals, indices=idx, batch_dims=1)
-        # create mask to make best actions zero in the original tensor
-        mask = tf.one_hot(tf.squeeze(idx,1), self.num_actions)
-        # mask = tf.tensor_scatter_nd_update(tf.ones_like(q_vals), idx, tf.zeros(tf.shape(idx)))
-        # get sub-optimal actions by applying mask
-        sub_acts = q_vals*mask
-        return (1-epsilon)*best_acts + (epsilon/(self.num_actions-1))*tf.reduce_sum(sub_acts, axis=1)
-
-    @tf.function
     def update_target(self, step_count):
         def update_ops(target_variable, source_variable):
             return target_variable.assign(source_variable, True)
@@ -82,12 +69,11 @@ class DoubleExpectedSARSA(tf.Module):
             return tf.group(name="update_all_variables", *update_vars)
 
     def update_trace(self, actions):
-        return getattr(torch_traces, self.args.trace)(self.args, actions, self.trace)
+        return getattr(traces, self.args.trace)(self.args, actions, self.trace)
 
     @tf.function
     def reset_trace(self):
             return tf.zeros((self.args.batch_size, self.num_actions))
-
 
 
 
