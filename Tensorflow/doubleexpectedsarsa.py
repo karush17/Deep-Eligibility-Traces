@@ -72,12 +72,12 @@ class DoubleExpectedSARSA(tf.Module):
         return (1-epsilon)*best_acts + (epsilon/(self.num_actions-1))*tf.reduce_sum(sub_acts, axis=1)
 
     def update_target(self, step_count):
-        def update_ops(source_variable, target_variable):
+        def update_ops(target_variable, source_variable):
             return target_variable.assign(source_variable, True)
 
         if step_count==1:
             update_vars = [update_ops(target_var, source_var) for target_var, source_var
-                             in zip(self.target_actor.weights, self.actor.weights)]
+                             in zip(self.target_actor.trainable_variables, self.actor.trainable_variables)]
             return tf.group(name="update_all_variables", *update_vars)
 
     def update_trace(self, actions):
