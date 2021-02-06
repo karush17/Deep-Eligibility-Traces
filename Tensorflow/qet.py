@@ -38,6 +38,7 @@ class ExpectedTrace(tf.Module):
         next_states = to_tensor(next_states)
         dones = to_tensor(dones)
         with tf.GradientTape() as trace_tape:
+            trace_tape.watch(self.exp_trace_param)
             vals = self.actor(states)
             vals = tf.gather_nd(params=vals, indices=tf.transpose(actions), batch_dims=1)
             next_vals = tf.reduce_max(self.actor(next_states), axis=1)
