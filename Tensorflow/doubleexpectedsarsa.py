@@ -52,9 +52,9 @@ class DoubleExpectedSARSA(tf.Module):
                 self.trace *= self.args.gamma*self.args.lamb
             td_error = tf.reduce_mean(td_error, axis=1)
             # td update
-            grads = tape.gradient(td_error, self.actor.trainable_variables)
-            self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
-            self.update_target(step_count)
+        grads = tape.gradient(td_error, self.actor.trainable_variables)
+        self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
+        self.update_target(step_count)
         return to_np(self.args, td_error)[0]
 
     @tf.function

@@ -41,16 +41,16 @@ class WatkinsQ(tf.Module):
             target = tf.stop_gradient(rewards + self.args.gamma*next_vals*(1 - dones))
             td_error = (target - vals)**2
             td_error = tf.reduce_mean(td_error, axis=1)
-            self.trace = self.reset_trace(step_count) 
-            grads = tape.gradient(td_error, self.actor.trainable_variables)
-            new_grads = []
-            for idx, p in enumerate(self.actor.trainable_variables):
-                if idx not in list(self.trace.keys()):
-                    self.trace = self.reset_trace(step_count, force_reset=True) 
-                self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + grads[idx]
-                new_grads.append(td_error*self.trace[idx])
-            grads = tuple(new_grads)
-            self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
+            self.trace = self.reset_trace(step_count)
+        grads = tape.gradient(td_error, self.actor.trainable_variables)
+        new_grads = []
+        for idx, p in enumerate(self.actor.trainable_variables):
+            if idx not in list(self.trace.keys()):
+                self.trace = self.reset_trace(step_count, force_reset=True) 
+            self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + grads[idx]
+            new_grads.append(td_error*self.trace[idx])
+        grads = tuple(new_grads)
+        self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
         return to_np(self.args, td_error)[0]
 
     @tf.function

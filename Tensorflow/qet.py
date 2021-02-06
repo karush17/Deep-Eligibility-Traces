@@ -15,6 +15,7 @@ class ExpectedTrace(tf.Module):
         self.actor = ActorNetwork(args, state_dims, num_actions)
         self.exp_trace_param = tf.Variable(tf.random.uniform((self.num_actions, self.state_dims)), trainable=True)
         self.opt_actor = optimizers.Adam(learning_rate=self.args.lr)
+        self.opt_trace = optimizers.Adam(learning_rate=self.args.lr)
         self.trace = {}
         for idx, p in enumerate(self.actor.trainable_variables):
             self.trace[idx] = tf.zeros(p.get_shape())
@@ -48,10 +49,10 @@ class ExpectedTrace(tf.Module):
             trace_loss = (tf.reduce_mean(self.exp_trace,1) - self.trace[ind_trace])**2 # learn expectation from last layer
             trace_loss = tf.reduce_mean(trace_loss)
             trace_grad = trace_tape.gradient(trace_loss, self.exp_trace_param)[0]
-            self.exp_trace_param = tf.map_fn(fn=lambda t: t+(self.args.lr*trace_grad), elems=self.exp_trace_param)
-            # self.exp_trace_param.assign_add(self.args.lr*trace_grad)
-            self.trace[ind_trace] = (1-self.eta)*tf.reduce_mean(self.exp_trace,1) + self.eta*self.trace[ind_trace]
-            # TD update
+        self.exp_trace_param = tf.map_fn(fn=lambda t: t+(self.args.lr*trace_grad), elems=self.exp_trace_param)
+        # self.exp_trace_param.assign_add(self.args.lr*trace_grad)
+        self.trace[ind_trace] = (1-self.eta)*tf.reduce_mean(self.exp_trace,1) + self.eta*self.trace[ind_trace]
+        # TD update
         with tf.GradientTape() as tape:
             vals = self.actor(states)
             vals = tf.gather_nd(params=vals, indices=tf.transpose(actions), batch_dims=1)
@@ -59,16 +60,16 @@ class ExpectedTrace(tf.Module):
             td_error = (target - vals)**2
             td_error = tf.reduce_mean(td_error, axis=1)
             self.trace = self.reset_trace(step_count) 
-            eval_gradients = tape.gradient(td_error, self.actor.trainable_variables)
-            # print(eval_gradients)
-            new_grads = []
-            for idx, p in enumerate(self.actor.trainable_variables):
-                if idx not in list(self.trace.keys()):
-                    self.trace = self.reset_trace(step_count, force_reset=True) 
-                self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
-                new_grads.append(td_error*self.trace[idx])
-            grads = tuple(new_grads)
-            self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
+        eval_gradients = tape.gradient(td_error, self.actor.trainable_variables)
+        # print(eval_gradients)
+        new_grads = []
+        for idx, p in enumerate(self.actor.trainable_variables):
+            if idx not in list(self.trace.keys()):
+                self.trace = self.reset_trace(step_count, force_reset=True) 
+            self.trace[idx] = self.args.gamma*self.args.lamb*self.trace[idx] + eval_gradients[idx]
+            new_grads.append(td_error*self.trace[idx])
+        grads = tuple(new_grads)
+        self.opt_actor.apply_gradients(zip(grads, self.actor.trainable_variables))
         return to_np(self.args, td_error)[0]
 
     @tf.function
