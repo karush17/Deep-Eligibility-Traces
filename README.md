@@ -37,7 +37,7 @@ Following algorithms are available in the current version-
 |Trace|Baseline Algorithms|Link|Implementation|Status|
 |:---:|:------------------|:--:|:------------:|:----:|
 |Q(λ)|Q(1)|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`watkinsq.py`](Pytorch/watkinsq.py)|:heavy_check_mark:|
-|QET(λ)|Q(1)|[Expected Eligibility Traces](https://arxiv.org/pdf/2007.01839.pdf)|[`qet.py`](Pytorch/qet.py)|In progress|
+|QET(λ)|Q(1)|[Expected Eligibility Traces](https://arxiv.org/pdf/2007.01839.pdf)|[`qet.py`](Pytorch/qet.py)|:heavy_check_mark:|
 |Replacing Trace|<ul><li>- [x] Sarsa</li><li>- [x] Q-learning</li><li>- [x] Expected Sarsa</li><li>- [x] Double Sarsa</li><li>- [x] Double Q-learning</li><li>- [x] Double Expected Sarsa</li></ul>|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`traces.py`](traces/traces.py)|In progress|
 |Accumulating Trace|<ul><li>- [x] Sarsa</li><li>- [x] Q-learning</li><li>- [x] Expected Sarsa</li><li>- [x] Double Sarsa</li><li>- [x] Double Q-learning</li><li>- [x] Double Expected Sarsa</li></ul>|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`traces.py`](traces/traces.py)|In progress|
 |Dutch Trace|<ul><li>- [x] Sarsa</li><li>- [x] Q-learning</li><li>- [x] Expected Sarsa</li><li>- [x] Double Sarsa</li><li>- [x] Double Q-learning</li><li>- [x] Double Expected Sarsa</li></ul>|[Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)|[`traces.py`](traces/traces.py)|In progress|
