@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow.keras import optimizers
 from networks.tf_networks import *
 from utils.utils import *
+from traces import tf_traces
 
 class ExpectedTrace(tf.Module):
     def __init__(self, args, state_dims, num_actions):

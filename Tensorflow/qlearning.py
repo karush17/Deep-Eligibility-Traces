@@ -6,6 +6,7 @@ from tensorflow.keras import optimizers
 from networks.tf_networks import *
 from utils.utils import *
 import traces
+from traces import tf_traces
 
 
 class QLearning(tf.Module):
@@ -55,7 +56,7 @@ class QLearning(tf.Module):
         return to_np(self.args, td_error)[0]
 
     def update_trace(self, actions):
-        return getattr(traces, self.args.trace)(self.args, actions, self.trace)
+        return getattr(tf_traces, self.args.trace)(self.args, actions, self.trace)
 
     @tf.function
     def reset_trace(self):

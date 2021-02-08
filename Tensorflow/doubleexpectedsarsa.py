@@ -6,6 +6,7 @@ from tensorflow.keras import optimizers
 from networks.tf_networks import *
 from utils.utils import *
 import traces
+from traces import tf_traces
 
 
 class DoubleExpectedSARSA(tf.Module):
@@ -82,7 +83,7 @@ class DoubleExpectedSARSA(tf.Module):
             return tf.group(name="update_all_variables", *update_vars)
 
     def update_trace(self, actions):
-        return getattr(torch_traces, self.args.trace)(self.args, actions, self.trace)
+        return getattr(tf_traces, self.args.trace)(self.args, actions, self.trace)
 
     @tf.function
     def reset_trace(self):
