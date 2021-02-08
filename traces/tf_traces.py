@@ -7,12 +7,13 @@ def replacing(args, actions, trace):
     return trace
 
 def accumulating(args, actions, trace):
-    trace = trace.scatter_(1, actions.unsqueeze(1), 1, reduce='add')
+    new_trace = tf.one_hot(tf.squeeze(tf.transpose(actions),1), trace.get_shape()[1])
+    trace += new_trace
     return trace
 
 def dutch(args, actions, trace):
-    trace = trace.scatter_(1, actions.unsqueeze(1), 1-args.lr, reduce='multiply')
-    trace = trace.scatter_(1, actions.unsqueeze(1), 1, reduce='add')
+    new_trace = tf.one_hot(tf.squeeze(tf.transpose(actions),1), trace.get_shape()[1])
+    trace += (1-args.lr)*new_trace + new_trace
     return trace
 
 
