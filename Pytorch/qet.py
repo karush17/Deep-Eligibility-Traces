@@ -49,7 +49,7 @@ class ExpectedTrace(nn.Module):
         self.exp_trace = torch.matmul(self.exp_trace_param, states.transpose(0,1))
         trace_loss = (self.exp_trace.mean(1) - self.trace[ind_trace]).pow(2).mean() # learn expectation from last layer
         trace_grad = ag.grad(trace_loss, self.exp_trace_param)[0]
-        self.exp_trace_param += self.args.lr*trace_grad
+        self.exp_trace_param = self.exp_trace_param + self.args.lr*trace_grad
         self.trace[ind_trace] = (1-self.eta)*self.exp_trace.mean(1) + self.eta*self.trace[ind_trace]
         # TD update
         target = rewards + self.args.gamma*next_vals*(1 - dones)
